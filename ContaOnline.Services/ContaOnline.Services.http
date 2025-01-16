@@ -1,0 +1,6 @@
+@OnlineBill.Services_HostAddress = http://localhost:5058
+
+GET {{OnlineBill.Services_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,131 @@
+﻿@model OnlineBill.UI.Web.Models.ContactViewModel
+
+@{
+    ViewData["Title"] = "Criar Contato";
+}
+
+<h1>Criar</h1>
+
+<h4>Contato</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">
+                    Nome
+                </label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PrimaryTelephoneNumber" class="control-label">
+                    Telefone principal
+                </label>
+                <input asp-for="PrimaryTelephoneNumber" type="tel" class="form-control" />
+                <span asp-validation-for="PrimaryTelephoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondaryTelephoneNumber" class="control-label">
+                    Telefone secundário
+                </label>
+                <input asp-for="SecondaryTelephoneNumber" type="tel" class="form-control" />
+                <span asp-validation-for="SecondaryTelephoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label">
+                    E-mail
+                </label>
+                <input asp-for="Email" type="email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Type" class="control-label">PF / PJ</label>
+                <select asp-for="Type" class="form-control" id="type" name="type">
+                    <option value="1" name="type" id="PF">Pessoa Física</option>
+                    <option value="2" name="type" id="PJ">Pessoa Jurídica</option>
+                </select>
+                <span asp-validation-for="Type" class="text-danger"></span>    
+            </div>
+            <div id="PJContainer">
+                <div class="form-group">
+                    <label asp-for="CNPJ" class="control-label">
+                        CNPJ
+                    </label>
+                    <input asp-for="CNPJ" class="form-control" />
+                    <span asp-validation-for="CNPJ" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="PFContainer">
+                <div class="form-group">
+                    <label asp-for="CPF" class="control-label">
+                        CPF
+                    </label>
+                    <input asp-for="CPF" class="form-control" />
+                    <span asp-validation-for="CPF" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RG" class="control-label">
+                        RG
+                    </label>
+                    <input asp-for="RG" class="form-control" />
+                    <span asp-validation-for="RG" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BirthDate" class="control-label">
+                        Data de nascimento
+                    </label>
+                    <input type="date" asp-for="BirthDate" class="form-control" />
+                    <span asp-validation-for="BirthDate" class="text-danger"></span>
+                </div>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Criar" class="btn btn-primary" />
+                <a asp-action="Index"><input type="button" value="Cancelar" class="btn btn-dark" /></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+     <script>
+        window.onload = function() {
+            var el = document.getElementById("type");
+            var value = el.value;
+            
+            if (value == "1")
+            {
+                $('#PFContainer').show();
+                $('#PJContainer').hide();
+            }
+            else if (value == "2")
+            {
+                $('#PFContainer').hide();
+                $('#PJContainer').show();
+            }
+        }
+
+        $(function() {
+            $('#type').change(function() {
+                var el = $(this);
+                var value = el.val();
+
+                if (value == "1")
+                {
+                    $('#PFContainer').show();
+                    $('#PJContainer').hide();
+                }
+                else
+                {
+                    $('#PFContainer').hide();
+                    $('#PJContainer').show();
+                }
+            });
+        });
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

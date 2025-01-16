@@ -1,0 +1,30 @@
+﻿@model OnlineBill.Domain.Models.CheckingAccount
+
+@{
+    ViewData["Title"] = "Editar Conta Corrente";
+}
+
+<h1>Editar</h1>
+
+<h4>Conta Corrente</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Descrição</label>
+                <input asp-for="Description" class="form-control" autofocus />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Salvar" class="btn btn-primary" />
+                <a asp-action="Index"><input type="button" value="Voltar" class="btn btn-dark" /></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
