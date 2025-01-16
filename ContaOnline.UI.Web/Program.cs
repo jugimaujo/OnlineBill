@@ -16,6 +16,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICheckingAccountRepository, CheckingAccountRepository>();
 builder.Services.AddScoped<IBillCategoryRepository, BillCategoryRepository>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IBillRepository, BillRepository>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAppHelper, AppHelper>();

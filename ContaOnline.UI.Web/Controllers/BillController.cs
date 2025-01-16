@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineBill.Domain.Interfaces;
+using OnlineBill.Domain.Models;
 using OnlineBill.UI.Web.Code;
 
 namespace OnlineBill.UI.Web.Controllers
@@ -22,7 +23,14 @@ namespace OnlineBill.UI.Web.Controllers
         // GET: Bill
         public ActionResult Index()
         {
-            return View();
+            var loggedUser = _appHelper.GetLoggedUser();
+
+            if (loggedUser == null)
+                RedirectToAction("Login", "App");
+
+            IEnumerable<BillListItem> billList = _billRepository.GetByUser(loggedUser.Id);
+
+            return View(billList);
         }
 
         // GET: Bill/Details/5
