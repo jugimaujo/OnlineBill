@@ -39,26 +39,27 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Contact)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Value.ToString("c"))
-            </td>
-            <td class="table-item-command">
-                <a href="@Url.Action("Edit", new { id = item.Id})"><i class="bi bi-pen"></i></a> |
-                <a href="@Url.Action("Delete", new { id = item.Id})"><i class="bi bi-trash3-fill"></i></a>
-            </td>
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Type) *@
+            @* </td> *@
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Description) *@
+            @* </td> *@
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Contact) *@
+            @* </td> *@
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Category) *@
+            @* </td> *@
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Value.ToString("c")) *@
+            @* </td> *@
+            @* <td class="table-item-command"> *@
+            @*     <a href="@Url.Action("Edit", new { id = item.Id})"><i class="bi bi-pen"></i></a> | *@
+            @*     <a href="@Url.Action("Delete", new { id = item.Id})"><i class="bi bi-trash3-fill"></i></a> *@
+            @* </td> *@
         </tr>
 }
     </tbody>
 </table>
+<a asp-controller="App" asp-action="Home"><input type="button" value="Voltar" class="btn btn-dark" /></a>

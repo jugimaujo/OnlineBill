@@ -10,11 +10,23 @@ namespace OnlineBill.UI.Web.Controllers
     {
 
         private readonly IBillRepository _billRepository;
+        private readonly ICheckingAccountRepository _checkingAccountRepository;
+        private readonly IBillCategoryRepository _billCategoryRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IAppHelper _appHelper;
+        private static User? loggedUser;
 
-        public BillController(IBillRepository billRepository, IAppHelper appHelper)
+        public BillController(
+            IBillRepository billRepository,
+            ICheckingAccountRepository checkingAccountRepository,
+            IBillCategoryRepository billCategoryRepository,
+            IContactRepository contactRepository,
+            IAppHelper appHelper)
         {
             _billRepository = billRepository;
+            _checkingAccountRepository = checkingAccountRepository;
+            _billCategoryRepository = billCategoryRepository;
+            _contactRepository = contactRepository;
             _appHelper = appHelper;
         }
 
@@ -23,7 +35,7 @@ namespace OnlineBill.UI.Web.Controllers
         // GET: Bill
         public ActionResult Index()
         {
-            var loggedUser = _appHelper.GetLoggedUser();
+            loggedUser = _appHelper.GetLoggedUser();
 
             if (loggedUser == null)
                 RedirectToAction("Login", "App");
@@ -40,18 +52,37 @@ namespace OnlineBill.UI.Web.Controllers
         }
 
         // GET: Bill/Create
+        [HttpGet]
         public ActionResult Create()
         {
-            return View();
+            var billViewModel = new BillViewModel();
+
+            FillBillViewModel(billViewModel);
+
+            return View(billViewModel);
+        }
+
+        private void FillBillViewModel(BillViewModel billViewModel)
+        {
+            billViewModel.CheckingAccountList = _checkingAccountRepository.GetAll(loggedUser.Id);
+
+            billViewModel.BillCategoryList = _billCategoryRepository.GetAll(loggedUser.Id);
+
+            billViewModel.ContactList = _contactRepository.GetAll(loggedUser.Id);
         }
 
         // POST: Bill/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(BillViewModel billViewModel)
         {
             try
             {
+                billViewModel.BillInstance.UserId = loggedUser.Id;
+                billViewModel.BillInstance.Id = Guid.NewGuid().ToString();
+
+                _billRepository.Add(billViewModel.BillInstance);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
