@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
 using OnlineBill.Domain.Models.ViewModel;
@@ -51,7 +52,25 @@ namespace OnlineBill.Repository
 
         IEnumerable<BillListItem> IBillRepository.GetByFilter(BillFilter filter)
         {
-            throw new NotImplementedException();
+            string storedProcedure = "spr_bill_get_between_dates";
+
+            filter.InitialDate = filter.InitialDate ?? DateTime.MinValue;
+            filter.FinalDate = filter.FinalDate ?? DateTime.MaxValue;
+
+            var filterList = Database.QueryCollection<BillListItem>(storedProcedure, new
+            {
+                initialDate = filter.InitialDate,
+                finalDate = filter.FinalDate,
+                userId = filter.UserId
+            }).ToList();
+
+            if (filter.CheckingAccountId != null)
+                filterList = filterList.Where(item => item.CheckingAccountId == filter.CheckingAccountId).ToList();
+
+            if (filter.BillCategoryId != null)
+                filterList = filterList.Where(item => item.BillCategoryId == filter.BillCategoryId).ToList();
+
+            return filterList;
         }
 
         public BillExhibitViewModel GetBillExhibitById(string id)
