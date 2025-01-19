@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<OnlineBill.Domain.Models.BillListItem>
+@using OnlineBill.Domain.Models
 
 @{
     ViewData["Title"] = "Contas a pagar e receber";
@@ -13,7 +14,7 @@
     <thead>
         <tr>
             <th>
-                Data
+                Data de vencimento
             </th>
             <th>
                 Tipo
@@ -37,27 +38,31 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                @DateOnly.FromDateTime(item.Date).ToString()
             </td>
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Type) *@
-            @* </td> *@
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Description) *@
-            @* </td> *@
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Contact) *@
-            @* </td> *@
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Category) *@
-            @* </td> *@
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Value.ToString("c")) *@
-            @* </td> *@
-            @* <td class="table-item-command"> *@
-            @*     <a href="@Url.Action("Edit", new { id = item.Id})"><i class="bi bi-pen"></i></a> | *@
-            @*     <a href="@Url.Action("Delete", new { id = item.Id})"><i class="bi bi-trash3-fill"></i></a> *@
-            @* </td> *@
+            <td>
+                @if (item.Type == PayReceive.Pay)
+                { <span>Pagar</span> }
+
+                else
+                { <span>Receber</span> }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Contact)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                @item.Value.ToString("C")
+            </td>
+            <td class="table-item-command">
+                <a href="@Url.Action("Edit", new { id = item.Id})"><i class="bi bi-pen"></i></a> |
+                <a href="@Url.Action("Delete", new { id = item.Id})"><i class="bi bi-trash3-fill"></i></a>
+            </td>
         </tr>
 }
     </tbody>

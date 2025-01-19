@@ -1,0 +1,94 @@
+﻿@model OnlineBill.Domain.Models.ViewModel.BillExhibitViewModel
+@using OnlineBill.Domain.Models
+
+@{
+    ViewData["Title"] = "Excluir Conta";
+}
+
+<h1>Excluir</h1>
+
+<h3>Tem certeza que quer excluir essa conta?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Conta corrente
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CheckingAccountDescription)
+        </dd>
+        <dt class = "col-sm-2">
+            Tipo
+        </dt>
+        <dd class = "col-sm-10">
+            @if (Model.Type == PayReceive.Pay)
+            { <span>Pagar</span> }
+
+            else
+            { <span>Receber</span> }
+        </dd>
+        <dt class = "col-sm-2">
+            Categoria
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CategoryName)
+        </dd>
+        <dt class = "col-sm-2">
+            Contato
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ContactName)
+        </dd>
+        <dt class = "col-sm-2">
+            Descrição
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            Vencimento
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.DueDate.ToString("d")
+        </dd>
+        <dt class = "col-sm-2">
+            Valor
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Value.ToString("c")
+        </dd>
+        <hr />
+        @if (Model.PaymentDate != null)
+        {
+            <dt class = "col-sm-2">
+                Data de pagamento
+            </dt>
+            <dd class = "col-sm-10">
+                @Model.PaymentDate.ToString().Substring(0, 10)
+            </dd>
+            <dt class="col-sm-2">
+                Acréscimo
+            </dt>
+            <dd class="col-sm-10">
+                R$ @Html.DisplayFor(model => model.Increase)
+            </dd>
+            <dt class = "col-sm-2">
+                Desconto
+            </dt>
+            <dd class = "col-sm-10">
+                R$ @Html.DisplayFor(model => model.Discount)
+            </dd>
+            <dt class = "col-sm-2">
+                Valor pago
+            </dt>
+            <dd class = "col-sm-10">
+                R$ @Html.DisplayFor(model => model.PaidValue)
+            </dd>
+        }
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="submit" value="Confirmar" class="btn btn-danger" /> |
+        <a asp-action="Index"><input type="button" value="Cancelar" class="btn btn-dark" /></a>
+    </form>
+</div>

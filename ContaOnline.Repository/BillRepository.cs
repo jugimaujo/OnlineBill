@@ -1,6 +1,7 @@
 ﻿using System;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
+using OnlineBill.Domain.Models.ViewModel;
 
 namespace OnlineBill.Repository
 {
@@ -51,6 +52,13 @@ namespace OnlineBill.Repository
         IEnumerable<BillListItem> IBillRepository.GetByFilter(BillFilter filter)
         {
             throw new NotImplementedException();
+        }
+
+        public BillExhibitViewModel GetBillExhibitById(string id)
+        {
+            string storedProcedure = "spr_bill_exhibition_get_by_id";
+
+            return Database.QueryEntity<BillExhibitViewModel>(storedProcedure, new { id = id });
         }
 
         public IEnumerable<string> Validate()

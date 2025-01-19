@@ -33,7 +33,7 @@ namespace OnlineBill.UI.Web.Controllers
 
 
         // GET: Bill
-        public ActionResult Index()
+        public IActionResult Index()
         {
             loggedUser = _appHelper.GetLoggedUser();
 
@@ -46,14 +46,14 @@ namespace OnlineBill.UI.Web.Controllers
         }
 
         // GET: Bill/Details/5
-        public ActionResult Details(int id)
+        public IActionResult Details(int id)
         {
             return View();
         }
 
         // GET: Bill/Create
         [HttpGet]
-        public ActionResult Create()
+        public IActionResult Create()
         {
             var billViewModel = new BillViewModel();
 
@@ -74,7 +74,7 @@ namespace OnlineBill.UI.Web.Controllers
         // POST: Bill/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(BillViewModel billViewModel)
+        public IActionResult Create(BillViewModel billViewModel)
         {
             try
             {
@@ -91,40 +91,54 @@ namespace OnlineBill.UI.Web.Controllers
             }
         }
 
-        // GET: Bill/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Bill/Edit/
+        public IActionResult Edit(string id)
         {
-            return View();
+            var billViewModel = new BillViewModel();
+
+            billViewModel.BillInstance = _billRepository.GetById(id);
+
+            FillBillViewModel(billViewModel);
+
+            return View(billViewModel);
         }
 
-        // POST: Bill/Edit/5
+        // POST: Bill/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult Edit(BillViewModel billViewModel)
         {
             try
             {
+                _billRepository.Update(billViewModel.BillInstance);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View(billViewModel);
             }
         }
 
-        // GET: Bill/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Bill/Delete/
+        public IActionResult Delete(string id)
         {
-            return View();
+            var billExhibitViewModel = _billRepository.GetBillExhibitById(id);
+
+            billExhibitViewModel.FormatOptionalValues();
+
+            return View(billExhibitViewModel);
         }
 
-        // POST: Bill/Delete/5
+        // POST: Bill/Delete/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public IActionResult Delete(string id, IFormCollection collection)
         {
             try
             {
+                _billRepository.Delete(id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch

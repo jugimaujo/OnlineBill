@@ -1,0 +1,120 @@
+﻿@model OnlineBill.Domain.Models.BillViewModel
+
+@{
+    ViewData["Title"] = "Editar Conta";
+}
+
+<h1>Editar</h1>
+
+<h4>Conta</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+
+            <input hidden asp-for="BillInstance.Id" value="@Model.BillInstance.Id"/>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.CheckingAccountId" class="control-label"> Conta corrente </label>
+                <select asp-for="BillInstance.CheckingAccountId" class="form-control">
+                    <option value="@null"></option>
+                    @foreach (var item in Model.CheckingAccountList)
+                    {
+                        <option value="@item.Id">@item.Description</option>
+                    }
+                </select>
+                <span asp-validation-for="BillInstance.CheckingAccountId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.Type" class="control-label"> Tipo </label>
+                <select asp-for="BillInstance.Type" class="form-control">
+                    <option value="1"> Pagar </option>
+                    <option value="2"> Receber </option>
+                </select>
+                <span asp-validation-for="BillInstance.Type" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.CategoryId" class="control-label"> Categoria </label>
+                <select asp-for="BillInstance.CategoryId" class="form-control">
+                    <option value="@null"></option>
+                    @foreach (var item in Model.BillCategoryList)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="BillInstance.CategoryId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.ContactId" class="control-label"> Contato </label>
+                <select asp-for="BillInstance.ContactId" class="form-control">
+                    <option value="@null"></option>
+                    @foreach (var item in Model.ContactList)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="BillInstance.ContactId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.DueDate" class="control-label"> Vencimento </label>
+                <input asp-for="BillInstance.DueDate" class="form-control" type="date" />
+                <span asp-validation-for="BillInstance.DueDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.Description" class="control-label"> Descrição </label>
+                <input asp-for="BillInstance.Description" class="form-control" type="text" />
+                <span asp-validation-for="BillInstance.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.Value" class="control-label"> Valor </label>
+                <input asp-for="BillInstance.Value" class="form-control" style="text-align:right" type="number" />
+                <span asp-validation-for="BillInstance.Value" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <label asp-for="BillInstance.PaymentDate" class="control-label"> Data de pagamento </label>
+                <input asp-for="BillInstance.PaymentDate" class="form-control" type="date" />
+                <span asp-validation-for="BillInstance.PaymentDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.Increase" class="control-label"> Acréscimo </label>
+                <input asp-for="BillInstance.Increase" class="form-control" type="number" />
+                <span asp-validation-for="BillInstance.Increase" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.Discount" class="control-label"> Desconto </label>
+                <input asp-for="BillInstance.Discount" class="form-control" type="number" />
+                <span asp-validation-for="BillInstance.Discount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BillInstance.PaidValue" class="control-label"> Valor pago </label>
+                <input asp-for="BillInstance.PaidValue" class="form-control" type="number" />
+                <span asp-validation-for="BillInstance.PaidValue" class="text-danger"></span>
+            </div>
+
+            <br />
+
+            <div class="form-group">
+                <input type="submit" value="Salvar" class="btn btn-primary" />
+                <a asp-action="Index"><input type="button" value="Cancelar" class="btn btn-dark" /></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
