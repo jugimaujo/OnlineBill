@@ -54,15 +54,29 @@ namespace OnlineBill.Repository
         {
             string storedProcedure = "spr_bill_get_between_dates";
 
-            filter.InitialDate = filter.InitialDate ?? DateTime.MinValue;
-            filter.FinalDate = filter.FinalDate ?? DateTime.MaxValue;
+            var filterList = new List<BillListItem>();
 
-            var filterList = Database.QueryCollection<BillListItem>(storedProcedure, new
-            {
-                initialDate = filter.InitialDate,
-                finalDate = filter.FinalDate,
-                userId = filter.UserId
-            }).ToList();
+            //filter.InitialDate = filter.InitialDate ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            //filter.FinalDate = filter.FinalDate ?? DateTime.Today;
+
+            //if (filter.InitialDate != null || filter.FinalDate != null)
+            //    filterList = Database.QueryCollection<BillListItem>(storedProcedure, new
+            //    {
+            //        initialDate = filter.InitialDate,
+            //        finalDate = filter.FinalDate,
+            //        userId = filter.UserId
+            //    }).ToList();
+
+            //else
+            //    filterList = GetByUser(filter.UserId).ToList();
+
+            filterList = GetByUser(filter.UserId).ToList();
+
+            if (filter.InitialDate != null)
+                filterList = filterList.Where(item => item.Date >= filter.InitialDate).ToList();
+
+            if (filter.FinalDate != null)
+                filterList = filterList.Where(item => item.Date <= filter.FinalDate).ToList();
 
             if (filter.CheckingAccountId != null)
                 filterList = filterList.Where(item => item.CheckingAccountId == filter.CheckingAccountId).ToList();

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<OnlineBill.Domain.Models.BillListItem>
+﻿@model OnlineBill.Domain.Models.BillListViewModel
 @using OnlineBill.Domain.Models
 
 @{
@@ -10,6 +10,53 @@
 <p>
     <a asp-action="Create"><i class="bi bi-plus-circle-fill"></i> Novo...</a>
 </p>
+
+<hr />
+
+<div class="filter">
+    <form method="post" class="row g-3">
+        <div class="col-auto">
+            <label asp-for="@Model.Filter.InitialDate" class="control-label">Data inicial:</label>
+            <input asp-for="@Model.Filter.InitialDate" class="form-control" type="date" />
+        </div>
+
+        <div class="col-auto">
+            <label asp-for="@Model.Filter.FinalDate" class="control-label">Data final:</label>
+            <input asp-for="@Model.Filter.FinalDate" class="form-control" type="date" />
+        </div>
+
+        <div class="col-auto">
+            <label asp-for="@Model.CheckingAccountList" class="control-label">Conta corrente:</label>
+            <select asp-for="@Model.Filter.CheckingAccountId" class="form-control">
+                <option value="@null"></option>
+                @foreach (var item in Model.CheckingAccountList)
+                {
+                    <option value="@item.Id">@item.Description</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-auto">
+            <label asp-for="@Model.BillCategoryList" class="control-label">Categoria:</label>
+            <select asp-for="@Model.Filter.BillCategoryId" class="form-control">
+                <option value="@null"></option>
+                @foreach (var item in Model.BillCategoryList)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-auto" style="display: flex; align-items: flex-end;">
+            <button class="btn btn-secondary"><i class="bi bi-funnel"></i> Filtrar</button>
+        </div>
+    </form>
+</div>
+
+<br /> <br />
+
+@if (Model.BillList.Count() > 0)
+{
 <table class="table">
     <thead>
         <tr>
@@ -35,7 +82,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.BillList) {
         <tr>
             <td>
                 @DateOnly.FromDateTime(item.Date).ToString()
@@ -67,4 +114,6 @@
 }
     </tbody>
 </table>
+}
+
 <a asp-controller="App" asp-action="Home"><input type="button" value="Voltar" class="btn btn-dark" /></a>

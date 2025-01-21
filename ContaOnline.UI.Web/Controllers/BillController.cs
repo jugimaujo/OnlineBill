@@ -40,12 +40,31 @@ namespace OnlineBill.UI.Web.Controllers
             if (loggedUser == null)
                 RedirectToAction("Login", "App");
 
-            IEnumerable<BillListItem> billList = _billRepository.GetByUser(loggedUser.Id);
+            var model = new BillListViewModel();
 
-            return View(billList);
+            model.BillList = _billRepository.GetByUser(loggedUser.Id);
+
+            FillBillListViewModel(model);
+
+            return View(model);
         }
 
-        // GET: Bill/Details/5
+        [HttpPost]
+        public IActionResult Index(BillListViewModel model)
+        {
+            if (loggedUser == null)
+                RedirectToAction("Login", "App");
+
+            model.Filter.UserId = loggedUser.Id;
+
+            model.BillList = _billRepository.GetByFilter(model.Filter).ToList();
+
+            FillBillListViewModel(model);
+
+            return View(model);
+        }
+
+        // GET: Bill/Details/
         public IActionResult Details(int id)
         {
             return View();
@@ -60,15 +79,6 @@ namespace OnlineBill.UI.Web.Controllers
             FillBillViewModel(billViewModel);
 
             return View(billViewModel);
-        }
-
-        private void FillBillViewModel(BillViewModel billViewModel)
-        {
-            billViewModel.CheckingAccountList = _checkingAccountRepository.GetAll(loggedUser.Id);
-
-            billViewModel.BillCategoryList = _billCategoryRepository.GetAll(loggedUser.Id);
-
-            billViewModel.ContactList = _contactRepository.GetAll(loggedUser.Id);
         }
 
         // POST: Bill/Create
@@ -145,6 +155,22 @@ namespace OnlineBill.UI.Web.Controllers
             {
                 return View();
             }
+        }
+
+        private void FillBillViewModel(BillViewModel billViewModel)
+        {
+            billViewModel.CheckingAccountList = _checkingAccountRepository.GetAll(loggedUser.Id);
+
+            billViewModel.BillCategoryList = _billCategoryRepository.GetAll(loggedUser.Id);
+
+            billViewModel.ContactList = _contactRepository.GetAll(loggedUser.Id);
+        }
+
+        private void FillBillListViewModel(BillListViewModel model)
+        {
+            model.CheckingAccountList = _checkingAccountRepository.GetAll(loggedUser.Id);
+
+            model.BillCategoryList = _billCategoryRepository.GetAll(loggedUser.Id);
         }
     }
 }
