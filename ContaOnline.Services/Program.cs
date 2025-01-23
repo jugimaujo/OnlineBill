@@ -1,3 +1,6 @@
+using OnlineBill.Domain.Interfaces;
+using OnlineBill.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddMvc();
+
+builder.Services.AddScoped<IBillRepository, BillRepository>();
 
 var app = builder.Build();
 
