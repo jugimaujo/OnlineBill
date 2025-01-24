@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
@@ -7,11 +8,12 @@ using OnlineBill.UI.Web.Models;
 
 namespace OnlineBill.UI.Web.Controllers
 {
+    [Authorize]
     public class CheckingAccountController : Controller
     {
         private readonly ICheckingAccountRepository _repository;
         private readonly IAppHelper _appHelper;
-        private User? loggedUser;
+        private string? loggedUserId;
 
         public CheckingAccountController(ICheckingAccountRepository repository, IAppHelper appHelper)
         {
@@ -21,14 +23,14 @@ namespace OnlineBill.UI.Web.Controllers
 
         public IActionResult Index()
         {
-            loggedUser = _appHelper.GetLoggedUser();
+            loggedUserId = _appHelper.GetLoggedUser();
 
             if (!_appHelper.IsUserLoggedIn())
             {
                 return RedirectToAction("Login", "App");
             }
 
-            var checkingAccountList = _repository.GetAll(loggedUser.Id);
+            var checkingAccountList = _repository.GetAll(loggedUserId);
 
             return View(checkingAccountList);
         }
@@ -47,12 +49,12 @@ namespace OnlineBill.UI.Web.Controllers
                 return View(checkingAccount);
             }
 
-            loggedUser = _appHelper.GetLoggedUser();
+            loggedUserId = _appHelper.GetLoggedUser();
 
             var newCheckingAccount = new CheckingAccount
             {
                 Id = Guid.NewGuid().ToString(),
-                UserId = loggedUser.Id,
+                UserId = loggedUserId,
                 Description = checkingAccount.Description,
             };
 

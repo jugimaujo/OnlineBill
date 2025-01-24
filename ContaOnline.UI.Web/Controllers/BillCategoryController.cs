@@ -6,11 +6,12 @@ using OnlineBill.UI.Web.Code;
 
 namespace OnlineBill.UI.Web.Controllers
 {
+    [Authorize]
     public class BillCategoryController : Controller
     {
         private readonly IBillCategoryRepository _billCategoryRepository;
         private readonly IAppHelper _appHelper;
-        private User? loggedUser;
+        private string? loggedUserId;
 
         public BillCategoryController(IBillCategoryRepository billCategoryRepository, IAppHelper appHelper)
         {
@@ -21,9 +22,9 @@ namespace OnlineBill.UI.Web.Controllers
         // GET: BillCategoryController
         public IActionResult Index()
         {
-            loggedUser = _appHelper.GetLoggedUser();
+            loggedUserId = _appHelper.GetLoggedUser();
 
-            var billCategoryList = _billCategoryRepository.GetAll(loggedUser.Id);
+            var billCategoryList = _billCategoryRepository.GetAll(loggedUserId);
 
             return View(billCategoryList);
         }
@@ -41,10 +42,10 @@ namespace OnlineBill.UI.Web.Controllers
         {
             try
             {
-                loggedUser = _appHelper.GetLoggedUser();
+                loggedUserId = _appHelper.GetLoggedUser();
 
                 billCategory.Id = Guid.NewGuid().ToString();
-                billCategory.UserId = loggedUser.Id;
+                billCategory.UserId = loggedUserId;
 
                 _billCategoryRepository.Add(billCategory);
 

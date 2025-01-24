@@ -4,6 +4,10 @@ using OnlineBill.UI.Web.Models;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
 using OnlineBill.UI.Web.Code;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace OnlineBill.UI.Web.Controllers
 {
@@ -22,14 +26,9 @@ namespace OnlineBill.UI.Web.Controllers
         /// Initial Screen
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         public IActionResult Home()
         {
-            var loggedUser = _appHelper.GetLoggedUser();
-            if (loggedUser == null)
-            {
-                return RedirectToAction("Login");
-            }
-
             return View();
         }
 
@@ -52,13 +51,33 @@ namespace OnlineBill.UI.Web.Controllers
             }
             else
             {
-                _appHelper.RegisterUser(user);
+                //_appHelper.RegisterUser(user);
 
-                return RedirectToAction("Home");
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim("userId", user.Id)
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var principal = new ClaimsPrincipal(identity);
+
+                HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
+
+                return RedirectToAction("Home", "App");
             }
 
             return View(loginViewModel);
 
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.SignOutAsync();
+
+            return View();
         }
         
         /// <summary>
@@ -85,7 +104,23 @@ namespace OnlineBill.UI.Web.Controllers
 
                 _userRepository.Add(user);
 
-                _appHelper.RegisterUser(user);
+                if(User.Identity.IsAuthenticated)
+                {
+                    HttpContext.SignOutAsync();
+                }
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim("userId", user.Id)
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var principal = new ClaimsPrincipal(identity);
+
+                HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
 
                 return Redirect("/");
             }

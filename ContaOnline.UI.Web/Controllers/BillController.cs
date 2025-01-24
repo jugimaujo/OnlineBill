@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
@@ -6,6 +7,7 @@ using OnlineBill.UI.Web.Code;
 
 namespace OnlineBill.UI.Web.Controllers
 {
+    [Authorize]
     public class BillController : Controller
     {
 
@@ -14,7 +16,7 @@ namespace OnlineBill.UI.Web.Controllers
         private readonly IBillCategoryRepository _billCategoryRepository;
         private readonly IContactRepository _contactRepository;
         private readonly IAppHelper _appHelper;
-        private static User? loggedUser;
+        private static string? loggedUserId;
 
         public BillController(
             IBillRepository billRepository,
@@ -35,14 +37,11 @@ namespace OnlineBill.UI.Web.Controllers
         // GET: Bill
         public IActionResult Index()
         {
-            loggedUser = _appHelper.GetLoggedUser();
-
-            if (loggedUser == null)
-                RedirectToAction("Login", "App");
+            loggedUserId = _appHelper.GetLoggedUser();
 
             var model = new BillListViewModel();
 
-            model.BillList = _billRepository.GetByUser(loggedUser.Id);
+            model.BillList = _billRepository.GetByUser(loggedUserId);
 
             FillBillListViewModel(model);
 
@@ -52,10 +51,7 @@ namespace OnlineBill.UI.Web.Controllers
         [HttpPost]
         public IActionResult Index(BillListViewModel model)
         {
-            if (loggedUser == null)
-                RedirectToAction("Login", "App");
-
-            model.Filter.UserId = loggedUser.Id;
+            model.Filter.UserId = loggedUserId;
 
             model.BillList = _billRepository.GetByFilter(model.Filter).ToList();
 
@@ -88,7 +84,7 @@ namespace OnlineBill.UI.Web.Controllers
         {
             try
             {
-                billViewModel.BillInstance.UserId = loggedUser.Id;
+                billViewModel.BillInstance.UserId = loggedUserId;
                 billViewModel.BillInstance.Id = Guid.NewGuid().ToString();
 
                 _billRepository.Add(billViewModel.BillInstance);
@@ -159,18 +155,18 @@ namespace OnlineBill.UI.Web.Controllers
 
         private void FillBillViewModel(BillViewModel billViewModel)
         {
-            billViewModel.CheckingAccountList = _checkingAccountRepository.GetAll(loggedUser.Id);
+            billViewModel.CheckingAccountList = _checkingAccountRepository.GetAll(loggedUserId);
 
-            billViewModel.BillCategoryList = _billCategoryRepository.GetAll(loggedUser.Id);
+            billViewModel.BillCategoryList = _billCategoryRepository.GetAll(loggedUserId);
 
-            billViewModel.ContactList = _contactRepository.GetAll(loggedUser.Id);
+            billViewModel.ContactList = _contactRepository.GetAll(loggedUserId);
         }
 
         private void FillBillListViewModel(BillListViewModel model)
         {
-            model.CheckingAccountList = _checkingAccountRepository.GetAll(loggedUser.Id);
+            model.CheckingAccountList = _checkingAccountRepository.GetAll(loggedUserId);
 
-            model.BillCategoryList = _billCategoryRepository.GetAll(loggedUser.Id);
+            model.BillCategoryList = _billCategoryRepository.GetAll(loggedUserId);
         }
     }
 }

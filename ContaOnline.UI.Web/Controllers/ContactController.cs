@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
@@ -7,11 +8,12 @@ using OnlineBill.UI.Web.Models;
 
 namespace OnlineBill.UI.Web.Controllers
 {
+    [Authorize]
     public class ContactController : Controller
     {
         private readonly IContactRepository _contactRepository;
         private readonly IAppHelper _appHelper;
-        private User? loggedUser;
+        private string? loggedUserId;
 
         public ContactController(IContactRepository contactRepository, IAppHelper appHelper)
         {
@@ -22,9 +24,9 @@ namespace OnlineBill.UI.Web.Controllers
         // GET: ContactController
         public IActionResult Index()
         {
-            loggedUser = _appHelper.GetLoggedUser();
+            loggedUserId = _appHelper.GetLoggedUser();
 
-            var contactList = _contactRepository.GetAll(loggedUser.Id);
+            var contactList = _contactRepository.GetAll(loggedUserId);
 
             return View(contactList);
         }
@@ -44,9 +46,9 @@ namespace OnlineBill.UI.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(contactViewModel.Name))
                 {
-                    loggedUser = _appHelper.GetLoggedUser();
+                    loggedUserId = _appHelper.GetLoggedUser();
 
-                    Contact contact = contactViewModel.ConvertToContact(loggedUser.Id);
+                    Contact contact = contactViewModel.ConvertToContact(loggedUserId);
 
                     _contactRepository.Add(contact);
 

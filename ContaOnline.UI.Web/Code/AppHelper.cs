@@ -8,15 +8,13 @@ namespace OnlineBill.UI.Web.Code
 {
     public interface IAppHelper
     {
-        void RegisterUser(User user);
-        User GetLoggedUser();
+        string GetLoggedUser();
         bool IsUserLoggedIn();
     }
 
     public class AppHelper: IAppHelper
     {
         private readonly IHttpContextAccessor contextAccessor;
-        private User? _userContext;
         public AppHelper(IHttpContextAccessor accessor)
         {
             contextAccessor = accessor;
@@ -24,25 +22,11 @@ namespace OnlineBill.UI.Web.Code
 
         private HttpContext Context { get { return contextAccessor.HttpContext; } }
 
-        public void RegisterUser(User user) 
+        public string? GetLoggedUser()
         {
-            string userJson = JsonConvert.SerializeObject(user);
+            var loggedUserId = Context.User.Claims.First(prop => prop.Type == "userId")?.Value;
 
-            Context.Session.SetString("user", userJson);
-        }
-
-        public User GetLoggedUser()
-        {
-            string userJson = Context.Session.GetString("user");
-
-            if (userJson != null)
-            {
-                _userContext = JsonConvert.DeserializeObject<User>(userJson);
-
-                return _userContext;
-            }
-
-            return null;
+            return loggedUserId ?? null;
         }
 
         public bool IsUserLoggedIn()
