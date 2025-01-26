@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using NToastNotify;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Repository;
 using OnlineBill.UI.Web.Code;
@@ -24,6 +25,15 @@ builder.Services.AddScoped<ICheckingAccountRepository, CheckingAccountRepository
 builder.Services.AddScoped<IBillCategoryRepository, BillCategoryRepository>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IBillRepository, BillRepository>();
+
+builder.Services.AddControllersWithViews()
+    .AddNToastNotifyToastr(new ToastrOptions
+    {
+        ProgressBar = true,
+        PositionClass = ToastPositions.BottomCenter,
+        CloseButton = true,
+        TimeOut = 5000
+    });
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAppHelper, AppHelper>();

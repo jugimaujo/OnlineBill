@@ -10,14 +10,18 @@ namespace OnlineBill.UI.Web.Code
     {
         string GetLoggedUser();
         bool IsUserLoggedIn();
+        bool IsDeletable(BaseDomain model);
     }
 
     public class AppHelper: IAppHelper
     {
         private readonly IHttpContextAccessor contextAccessor;
-        public AppHelper(IHttpContextAccessor accessor)
+        private readonly IBillRepository _billRepository;
+
+        public AppHelper(IHttpContextAccessor accessor, IBillRepository billRepository)
         {
             contextAccessor = accessor;
+            _billRepository = billRepository;
         }
 
         private HttpContext Context { get { return contextAccessor.HttpContext; } }
@@ -32,6 +36,13 @@ namespace OnlineBill.UI.Web.Code
         public bool IsUserLoggedIn()
         {
             return GetLoggedUser() != null;
+        }
+        
+        public bool IsDeletable(BaseDomain model)
+        {
+            var billList = _billRepository.GetAll(model.UserId);
+
+            return !billList.Where(bill => bill.CheckingAccountId == model.Id).Any();
         }
     }
 }

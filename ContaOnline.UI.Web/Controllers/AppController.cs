@@ -8,18 +8,19 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using NToastNotify;
 
 namespace OnlineBill.UI.Web.Controllers
 {
     public class AppController : Controller
     {   
         private readonly IUserRepository _userRepository;
-        private readonly IAppHelper _appHelper;
+        private readonly IToastNotification _toastr;
 
-        public AppController(IUserRepository userRepository, IAppHelper appHelper)
+        public AppController(IUserRepository userRepository, IToastNotification toastr)
         {
             _userRepository = userRepository;
-            _appHelper = appHelper;
+            _toastr = toastr;
         }
 
         /// <summary>
@@ -65,6 +66,9 @@ namespace OnlineBill.UI.Web.Controllers
 
                 HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
+
+                _toastr.AddSuccessToastMessage("Você fez login com sucesso",
+                    new ToastrOptions { Title = "Login" });
 
                 return RedirectToAction("Home", "App");
             }
