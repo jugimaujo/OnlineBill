@@ -15,12 +15,12 @@ namespace OnlineBill.UI.Web.Controllers
     public class AppController : Controller
     {   
         private readonly IUserRepository _userRepository;
-        private readonly IToastNotification _toastr;
+        private readonly IToastNotification _toastrService;
 
-        public AppController(IUserRepository userRepository, IToastNotification toastr)
+        public AppController(IUserRepository userRepository, IToastNotification toastrService)
         {
             _userRepository = userRepository;
-            _toastr = toastr;
+            _toastrService = toastrService;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace OnlineBill.UI.Web.Controllers
                 HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
 
-                _toastr.AddSuccessToastMessage("Você fez login com sucesso",
+                _toastrService.AddSuccessToastMessage("Você fez login com sucesso",
                     new ToastrOptions { Title = "Login" });
 
                 return RedirectToAction("Home", "App");

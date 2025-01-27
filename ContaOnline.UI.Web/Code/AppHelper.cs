@@ -42,7 +42,10 @@ namespace OnlineBill.UI.Web.Code
         {
             var billList = _billRepository.GetAll(model.UserId);
 
-            return !billList.Where(bill => bill.CheckingAccountId == model.Id).Any();
+            return !billList.Where(bill => bill.CheckingAccountId == model.Id ||
+                                           bill.CategoryId == model.Id ||
+                                           bill.ContactId == model.Id
+                                           ).Any();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NToastNotify;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
 using OnlineBill.UI.Web.Code;
@@ -11,12 +12,14 @@ namespace OnlineBill.UI.Web.Controllers
     {
         private readonly IBillCategoryRepository _billCategoryRepository;
         private readonly IAppHelper _appHelper;
+        private readonly IToastNotification _toastrService;
         private string? loggedUserId;
 
-        public BillCategoryController(IBillCategoryRepository billCategoryRepository, IAppHelper appHelper)
+        public BillCategoryController(IBillCategoryRepository billCategoryRepository, IAppHelper appHelper, IToastNotification toastrService)
         {
             _billCategoryRepository = billCategoryRepository;
             _appHelper = appHelper;
+            _toastrService = toastrService;
         }
 
         // GET: BillCategoryController
@@ -87,10 +90,18 @@ namespace OnlineBill.UI.Web.Controllers
         {
             var billCategory = _billCategoryRepository.GetById(id);
 
+            if (!_appHelper.IsDeletable(billCategory))
+            {
+                _toastrService.AddErrorToastMessage("Não é possível excluir essa Categoria, pois ela está sendo usada em suas contas.",
+                new ToastrOptions { Title = "Erro ao excluir" });
+
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(billCategory);
         }
 
-        // POST: BillCategoryController/Delete/5
+        // POST: BillCategoryController/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(BillCategory billCategory)

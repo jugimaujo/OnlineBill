@@ -15,14 +15,14 @@ namespace OnlineBill.UI.Web.Controllers
     {
         private readonly ICheckingAccountRepository _repository;
         private readonly IAppHelper _appHelper;
-        private readonly IToastNotification _toastr;
+        private readonly IToastNotification _toastrService;
         private string? loggedUserId;
 
-        public CheckingAccountController(ICheckingAccountRepository repository, IAppHelper appHelper, IToastNotification toastr)
+        public CheckingAccountController(ICheckingAccountRepository repository, IAppHelper appHelper, IToastNotification toastrService)
         {
             _repository = repository;
             _appHelper = appHelper;
-            _toastr = toastr;
+            _toastrService = toastrService;
         }
 
         public IActionResult Index()
@@ -96,10 +96,10 @@ namespace OnlineBill.UI.Web.Controllers
                 return View(checkingAccount);
             }
 
-            _toastr.AddErrorToastMessage("Não é possível excluir essa Conta Corrente, pois ela está sendo usada em uma conta existente.",
+            _toastrService.AddErrorToastMessage("Não é possível excluir essa Conta Corrente, pois ela está sendo usada em uma conta.",
                 new ToastrOptions { Title = "Erro ao excluir"});
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]

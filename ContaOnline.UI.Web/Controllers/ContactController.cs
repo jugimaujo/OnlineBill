@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NToastNotify;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
 using OnlineBill.UI.Web.Code;
@@ -13,11 +14,13 @@ namespace OnlineBill.UI.Web.Controllers
     {
         private readonly IContactRepository _contactRepository;
         private readonly IAppHelper _appHelper;
+        private readonly IToastNotification _toastrService;
         private string? loggedUserId;
 
-        public ContactController(IContactRepository contactRepository, IAppHelper appHelper)
+        public ContactController(IContactRepository contactRepository, IAppHelper appHelper, IToastNotification toastrService)
         {
             _contactRepository = contactRepository;
+            _toastrService = toastrService;
             _appHelper = appHelper;
         }
 
@@ -93,7 +96,7 @@ namespace OnlineBill.UI.Web.Controllers
         // POST: ContactController/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(ContactViewModel contactViewModel)
+        public IActionResult Edit(ContactViewModel contactViewModel)
         {
             try
             {
@@ -138,10 +141,19 @@ namespace OnlineBill.UI.Web.Controllers
             }
         }
 
-        // GET: ContactController/Delete/5
-        public ActionResult Delete(string id)
+        // GET: ContactController/Delete/
+        public IActionResult Delete(string id)
         {
             var contact = _contactRepository.GetById(id);
+
+            if(!_appHelper.IsDeletable(contact))
+            {
+                _toastrService.AddErrorToastMessage("Não é possível excluir esse Contato, pois ele está sendo usado em suas contas.",
+                new ToastrOptions { Title = "Erro ao excluir" });
+
+                return RedirectToAction(nameof(Index));
+            }
+
             var contactViewModel = new ContactViewModel
             {
                 Name = contact.Name,
@@ -165,10 +177,10 @@ namespace OnlineBill.UI.Web.Controllers
             return View(contactViewModel);
         }
 
-        // POST: ContactController/Delete/5
+        // POST: ContactController/Delete
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(string id, IFormCollection collection)
+        public IActionResult Delete(string id, IFormCollection collection)
         {
             try
             {
