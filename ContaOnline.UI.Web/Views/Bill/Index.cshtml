@@ -85,7 +85,7 @@
 @foreach (var item in Model.BillList) {
         <tr>
             <td>
-                @DateOnly.FromDateTime(item.Date).ToString()
+                @DateOnly.FromDateTime(item.DueDate).ToString()
             </td>
             <td>
                 @if (item.Type == PayReceive.Pay)

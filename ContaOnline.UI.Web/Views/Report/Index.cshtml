@@ -1,0 +1,80 @@
+﻿@model OnlineBill.Domain.Models.BillGraphViewModel
+@using Newtonsoft.Json
+
+@{
+	ViewData["Title"] = "Relatórios";
+
+	List<string> months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+	List<decimal> earnPerMonth = ViewBag.Earns;
+	List<decimal> lostPerMonth = ViewBag.Losts;
+	// List<decimal> totalPerMonth = ViewBag.Totals;
+
+	var monthSerialize = Html.Raw(JsonConvert.SerializeObject(months));
+
+	var earnPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(earnPerMonth));
+	var lostPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(lostPerMonth));
+	// var totalPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(totalPerMonth));
+
+	var billsValues = Html.Raw(JsonConvert.SerializeObject(Model.BillGroup.Select(bills => bills.TotalValue)));
+}
+
+<h2>Relatórios de contas</h2>
+
+<canvas id="graph" width="400" , height="150">
+</canvas>
+
+@section Scripts {
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	<script>
+		$(document).ready(function() {
+			const data = {
+				labels: @monthSerialize,
+				datasets: [
+				{
+					label: 'Ganho',
+					data: @earnPerMonthSerialize,
+					backgroundColor: 'rgba(65, 255, 65, 0.5)',
+					stack: 'Stack 1'
+				},
+				{
+					label: 'Perda',
+					data: @lostPerMonthSerialize,
+					backgroundColor: 'rgba(255, 99, 195, 0.5)',
+					stack: 'Stack 1'
+				}
+				]
+			}
+
+			const config = {
+				type: 'bar',
+				data: data,
+				options: {
+					legends: {
+						display: false,
+					},
+					responsive: true,
+					plugins: {
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Ganho e Perda X Mês'
+					}
+					}
+				},
+			};
+
+			const ctx = $('#graph')
+			new Chart(ctx, config)
+
+
+			function hideGraph() {
+				data = null;
+			}
+		});
+
+	</script>
+}

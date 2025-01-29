@@ -73,10 +73,10 @@ namespace OnlineBill.Repository
             filterList = GetByUser(filter.UserId).ToList();
 
             if (filter.InitialDate != null)
-                filterList = filterList.Where(item => item.Date >= filter.InitialDate).ToList();
+                filterList = filterList.Where(item => item.DueDate >= filter.InitialDate).ToList();
 
             if (filter.FinalDate != null)
-                filterList = filterList.Where(item => item.Date <= filter.FinalDate).ToList();
+                filterList = filterList.Where(item => item.DueDate <= filter.FinalDate).ToList();
 
             if (filter.CheckingAccountId != null)
                 filterList = filterList.Where(item => item.CheckingAccountId == filter.CheckingAccountId).ToList();
