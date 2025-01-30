@@ -4,7 +4,6 @@ using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.JSInterop;
 
 namespace OnlineBill.UI.Web.Controllers
 {
@@ -28,7 +27,7 @@ namespace OnlineBill.UI.Web.Controllers
 
             List<decimal> earnPerMonth = new();
             List<decimal> lostPerMonth = new();
-            //List<decimal> totalPerMonth = new();
+            List<decimal> totalPerMonth = new();
 
             BillGraphViewModel billGraphViewModel = new BillGraphViewModel
             {
@@ -43,6 +42,7 @@ namespace OnlineBill.UI.Web.Controllers
                 {
                     earnPerMonth.Add(0);
                     lostPerMonth.Add(0);
+                    totalPerMonth.Add(0);
                     continue;
                 }
 
@@ -54,15 +54,15 @@ namespace OnlineBill.UI.Web.Controllers
                     LostValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.Value)
                 };
 
-                billGroup.TotalValue = billGroup.EarnValue - billGroup.LostValue;
+                billGroup.TotalValue = billGroup.EarnValue + billGroup.LostValue;
 
                 earnPerMonth.Add(billGroup.EarnValue);
                 lostPerMonth.Add(billGroup.LostValue);
-                //totalPerMonth.Add(billGroup.TotalValue);
+                totalPerMonth.Add(billGroup.TotalValue);
 
                 ViewBag.Earns = earnPerMonth;
                 ViewBag.Losts = lostPerMonth;
-                //ViewBag.Totals = totalPerMonth;
+                ViewBag.Totals = totalPerMonth;
 
                 billGraphViewModel.BillGroup.Add(billGroup);
             }
