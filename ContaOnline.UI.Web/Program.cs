@@ -29,7 +29,6 @@ builder.Services.AddScoped<IBillRepository, BillRepository>();
 builder.Services.AddControllersWithViews()
     .AddNToastNotifyToastr(new ToastrOptions
     {
-        ProgressBar = true,
         PositionClass = ToastPositions.BottomCenter,
         CloseButton = true,
         TimeOut = 5000

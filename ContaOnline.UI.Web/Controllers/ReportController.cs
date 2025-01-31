@@ -4,6 +4,8 @@ using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Web;
+using Microsoft.VisualBasic;
 
 namespace OnlineBill.UI.Web.Controllers
 {
@@ -23,51 +25,121 @@ namespace OnlineBill.UI.Web.Controllers
 
         public IActionResult Index()
         {
-            var billList = _billRepository.GetAll(loggedUser);
+            var billList = _billRepository.GetAllInDetail(loggedUser);
 
-            List<decimal> earnPerMonth = new();
-            List<decimal> lostPerMonth = new();
-            List<decimal> totalPerMonth = new();
+            List<DateTime> months = new();
+
+            List<decimal> dueEarnPerMonth = new();
+            List<decimal> dueLostPerMonth = new();
+            List<decimal> dueTotalPerMonth = new();
+
+            List<decimal?> paidEarnPerMonth = new();
+            List<decimal?> paidLostPerMonth = new();
+            List<decimal?> paidTotalPerMonth = new();
 
             BillGraphViewModel billGraphViewModel = new BillGraphViewModel
             {
                 BillGroup = []
             };
 
-            for (int month = 1; month <= 12; month++)
+            int minYear = billList.Select(bill => bill.DueDate.Year).Min(); 
+
+            int yearNumbers = GetYearsQuantity(billList);
+
+            for (int y = 1; y <= yearNumbers; y++)
             {
-                var billsPerMonth = billList.Where(bill => bill.DueDate.Month == month).ToList();
+                int year = minYear + (y - 1);
 
-                if (billsPerMonth.Count == 0)
+                for (int month = 1; month <= 12; month++)
                 {
-                    earnPerMonth.Add(0);
-                    lostPerMonth.Add(0);
-                    totalPerMonth.Add(0);
-                    continue;
+                    var billsPerMonth = billList.Where(bill => (bill.DueDate.Month == month &&
+                                                               bill.DueDate.Year == year) ||
+                                                               (bill.PaymentDate?.Month == month &&
+                                                               bill.PaymentDate?.Year == year)).ToList();
+
+                    if (billsPerMonth.Count == 0)
+                    {
+                        dueEarnPerMonth.Add(0);
+                        dueLostPerMonth.Add(0);
+                        dueTotalPerMonth.Add(0);
+
+                        paidEarnPerMonth.Add(0);
+                        paidLostPerMonth.Add(0);
+                        paidTotalPerMonth.Add(0);
+                        continue;
+                    }
+
+                    var billGroup = new BillGraphGroupPerMonth
+                    {
+                        BillList = billsPerMonth,
+                        Month = month,
+                        
+                        DueEarnValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill.Value),
+                        DueLostValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.Value),
+
+                        PaidEarnValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill.PaidValue),
+                        PaidLostValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.PaidValue),
+                    };
+
+                    billGroup.DueTotalValue = billGroup.DueEarnValue + billGroup.DueLostValue;
+                    billGroup.PaidTotalValue = billGroup.PaidEarnValue + billGroup.PaidLostValue;
+
+                    billGraphViewModel.BillGroup.Add(billGroup);
+
+                    dueEarnPerMonth.Add(billGroup.DueEarnValue);
+                    dueLostPerMonth.Add(billGroup.DueLostValue);
+                    dueTotalPerMonth.Add(billGroup.DueTotalValue);
+
+                    paidEarnPerMonth.Add(billGroup.PaidEarnValue);
+                    paidLostPerMonth.Add(billGroup.PaidLostValue);
+                    paidTotalPerMonth.Add(billGroup.PaidTotalValue);
                 }
-
-                var billGroup = new BillGraphGroupPerMonth
-                {
-                    BillList = billsPerMonth,
-                    Month = month,
-                    EarnValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill.Value),
-                    LostValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.Value)
-                };
-
-                billGroup.TotalValue = billGroup.EarnValue + billGroup.LostValue;
-
-                earnPerMonth.Add(billGroup.EarnValue);
-                lostPerMonth.Add(billGroup.LostValue);
-                totalPerMonth.Add(billGroup.TotalValue);
-
-                ViewBag.Earns = earnPerMonth;
-                ViewBag.Losts = lostPerMonth;
-                ViewBag.Totals = totalPerMonth;
-
-                billGraphViewModel.BillGroup.Add(billGroup);
             }
+            
+            ViewBag.Months = GenerateMonths(billList);
+
+            ViewBag.DueEarns = dueEarnPerMonth;
+            ViewBag.DueLosts = dueLostPerMonth;
+            ViewBag.DueTotals = dueTotalPerMonth;
+
+            ViewBag.PaidEarns = paidEarnPerMonth;
+            ViewBag.PaidLosts = paidLostPerMonth;
+            ViewBag.PaidTotals = paidTotalPerMonth;
 
             return View(billGraphViewModel);
+        }
+
+        private IEnumerable<string> GenerateMonths(IEnumerable<Bill> billList)
+        {
+            List<string> months = new();
+
+            var minYear = billList.Select(bill => bill.DueDate.Year).Min();
+
+            int totalYears = GetYearsQuantity(billList);
+
+            string pattern = totalYears == 1 ? "MMMM" : "MMM/yy";
+
+            for (int y = 1; y <= totalYears; y++)
+            {
+                int year = minYear + (y - 1);
+
+                for (int month = 1; month <= 12; month++)
+                {
+                    var date = new DateTime(year, month, 1);
+
+                    months.Add(date.ToString(pattern));
+                }
+            }
+
+            return months;
+        }
+
+        private int GetYearsQuantity(IEnumerable<Bill> billList)
+        {
+            var maxYear = billList.Select(bill => bill.DueDate.Year).Max();
+            var minYear = billList.Select(bill => bill.DueDate.Year).Min();
+
+            return (maxYear - minYear) + 1;
         }
     }
 }

@@ -13,5 +13,6 @@ namespace OnlineBill.Domain.Interfaces
         BillExhibitViewModel GetBillExhibitById(string id);
         IEnumerable<BillListItem> GetByUser(string userId);
         IEnumerable<BillListItem> GetByFilter(BillFilter filter);
+        IEnumerable<Bill> GetAllInDetail(string userId);
     }
 }

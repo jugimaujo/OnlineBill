@@ -4,25 +4,33 @@
 @{
 	ViewData["Title"] = "Relatórios";
 
-	List<string> months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+	List<string> months = ViewBag.Months;
 
-	List<decimal> earnPerMonth = ViewBag.Earns;
-	List<decimal> lostPerMonth = ViewBag.Losts;
-	List<decimal> totalPerMonth = ViewBag.Totals;
+	List<decimal> dueEarnPerMonth = ViewBag.DueEarns;
+	List<decimal> dueLostPerMonth = ViewBag.DueLosts;
+	List<decimal> dueTotalPerMonth = ViewBag.DueTotals;
+
+	List<decimal?> paidEarnPerMonth = ViewBag.PaidEarns;
+	List<decimal?> paidLostPerMonth = ViewBag.PaidLosts;
+	List<decimal?> paidTotalPerMonth = ViewBag.PaidTotals;
 
 	var monthSerialize = Html.Raw(JsonConvert.SerializeObject(months));
 
-	var earnPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(earnPerMonth));
-	var lostPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(lostPerMonth));
-	var totalPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(totalPerMonth));
+	var dueEarnPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(dueEarnPerMonth));
+	var dueLostPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(dueLostPerMonth));
+	var dueTotalPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(dueTotalPerMonth));
 
-	var billsValues = Html.Raw(JsonConvert.SerializeObject(Model.BillGroup.Select(bills => bills.TotalValue)));
+	var paidEarnPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(paidEarnPerMonth));
+	var paidLostPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(paidLostPerMonth));
+	var paidTotalPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(paidTotalPerMonth));
 }
 
 <h2>Relatórios de contas</h2>
 
-<button id="dueDateButton">Valores de Vencimento</button>
-<button id="totalDueDateButton">Valores Total Vencimento</button>
+<button id="dueDateButton">Ganho e Perda a vencer</button>
+<button id="totalDueDateButton">Valores Totais a vencer</button>
+<button id="payDateButton">Ganho e Perda pagos</button>
+<button id="totalPayDateButton">Valores Totais pagos</button>
 
 <canvas id="graph" width="400" height="150">
 </canvas>
@@ -38,12 +46,12 @@
 			datasets: [
 					{
 						label: 'Ganho',
-						data: @earnPerMonthSerialize,
+						data: @dueEarnPerMonthSerialize,
 						backgroundColor: 'rgba(65, 255, 65, 0.5)',
 					},
 					{
 						label: 'Perda',
-						data: @lostPerMonthSerialize,
+						data: @dueLostPerMonthSerialize,
 						backgroundColor: 'rgba(255, 99, 195, 0.5)'
 					}
 			]
@@ -54,8 +62,35 @@
 			datasets: [
 					{
 						label: 'Total',
-						data: @totalPerMonthSerialize,
+						data: @dueTotalPerMonthSerialize,
+						backgroundColor: 'rgba(65, 98, 255, 0.5)',
+					}
+			]
+		};
+
+		const dataPaidDateValues = {
+			labels: @monthSerialize,
+			datasets: [
+					{
+						label: 'Ganho',
+						data: @paidEarnPerMonthSerialize,
 						backgroundColor: 'rgba(65, 255, 65, 0.5)',
+					},
+					{
+						label: 'Perda',
+						data: @paidLostPerMonthSerialize,
+						backgroundColor: 'rgba(255, 99, 195, 0.5)'
+					}
+			]
+		};
+
+		const dataTotalPayDateValues = {
+			labels: @monthSerialize,
+			datasets: [
+					{
+						label: 'Total',
+						data: @paidTotalPerMonthSerialize,
+						backgroundColor: 'rgba(65, 98, 255, 0.5)',
 					}
 			]
 		};
@@ -98,8 +133,22 @@
 			graph.update();
 		}
 
+		function showPayDateValues() {
+			graph.data = dataPaidDateValues;
+			graph.options.plugins.title.text = 'Ganho e Perda (pagos) X Mês'
+			graph.update();
+		}
+
+		function showTotalPayDateValues() {
+			graph.data = dataTotalPayDateValues;
+			graph.options.plugins.title.text = 'Total (pago) X Mês'
+			graph.update();
+		}
+
 		document.querySelector('#dueDateButton').addEventListener('click', showDueDateValues);
 		document.querySelector('#totalDueDateButton').addEventListener('click', showTotalDueDateValues);
+		document.querySelector('#payDateButton').addEventListener('click', showPayDateValues);
+		document.querySelector('#totalPayDateButton').addEventListener('click', showTotalPayDateValues);
 
 		});
 

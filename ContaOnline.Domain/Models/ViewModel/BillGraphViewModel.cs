@@ -19,9 +19,12 @@ namespace OnlineBill.Domain.Models
     {
         public List<Bill> BillList { get; set; }
         public int Month {  get; set; }
-        public decimal EarnValue { get; set; }
-        public decimal LostValue { get; set; }
-        public decimal TotalValue { get; set; }
+        public decimal DueEarnValue { get; set; }
+        public decimal DueLostValue { get; set; }
+        public decimal DueTotalValue { get; set; }
+        public decimal? PaidEarnValue { get; set; }
+        public decimal? PaidLostValue { get; set; }
+        public decimal? PaidTotalValue { get; set; }
     }
 
     public class BillGraphItem

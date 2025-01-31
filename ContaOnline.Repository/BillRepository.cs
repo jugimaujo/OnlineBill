@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using OnlineBill.Domain.Interfaces;
 using OnlineBill.Domain.Models;
 using OnlineBill.Domain.Models.ViewModel;
@@ -56,20 +57,6 @@ namespace OnlineBill.Repository
 
             var filterList = new List<BillListItem>();
 
-            //filter.InitialDate = filter.InitialDate ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            //filter.FinalDate = filter.FinalDate ?? DateTime.Today;
-
-            //if (filter.InitialDate != null || filter.FinalDate != null)
-            //    filterList = Database.QueryCollection<BillListItem>(storedProcedure, new
-            //    {
-            //        initialDate = filter.InitialDate,
-            //        finalDate = filter.FinalDate,
-            //        userId = filter.UserId
-            //    }).ToList();
-
-            //else
-            //    filterList = GetByUser(filter.UserId).ToList();
-
             filterList = GetByUser(filter.UserId).ToList();
 
             if (filter.InitialDate != null)
@@ -92,6 +79,13 @@ namespace OnlineBill.Repository
             string storedProcedure = "spr_bill_exhibition_get_by_id";
 
             return Database.QueryEntity<BillExhibitViewModel>(storedProcedure, new { id = id });
+        }
+
+        public IEnumerable<Bill> GetAllInDetail(string userId)
+        {
+            string storedProcedure = "spr_bill_get_all_in_detail";
+
+            return Database.QueryCollection<Bill>(storedProcedure, new { userId = userId });
         }
 
         public IEnumerable<string> Validate()
