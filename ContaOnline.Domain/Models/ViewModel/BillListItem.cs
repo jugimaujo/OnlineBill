@@ -16,7 +16,7 @@ namespace OnlineBill.Domain.Models
         public string Category { get; set; }
         public decimal Value { get; set; }
 
-        public string BillCategoryId { get; set; }
+        public string CategoryId { get; set; }
         public string CheckingAccountId { get; set; }
     }
 }

@@ -14,12 +14,14 @@ namespace OnlineBill.UI.Web.Controllers
     {
         private readonly IAppHelper _appHelper;
         private readonly IBillRepository _billRepository;
+        private readonly IBillCategoryRepository _billCategoryRepository;
         private readonly string loggedUser;
 
-        public ReportController(IAppHelper appHelper, IBillRepository billRepository)
+        public ReportController(IAppHelper appHelper, IBillRepository billRepository, IBillCategoryRepository billCategoryRepository)
         {
             _appHelper = appHelper;
             _billRepository = billRepository;
+            _billCategoryRepository = billCategoryRepository;
             loggedUser = _appHelper.GetLoggedUser();
         }
 
@@ -27,6 +29,38 @@ namespace OnlineBill.UI.Web.Controllers
         {
             var billList = _billRepository.GetAllInDetail(loggedUser);
 
+            BillGraphViewModel billGraphViewModel = new BillGraphViewModel
+            {
+                BillGroup = [],
+                CategoryList = _billCategoryRepository.GetAll(loggedUser)
+            };
+
+            LoadBarGraph(billList, billGraphViewModel);
+
+            return View(billGraphViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Index(BillGraphViewModel model)
+        {
+            model.Filter.UserId = loggedUser;
+
+            var billList = _billRepository.GetByGraphFilter(model.Filter);
+
+            model = new BillGraphViewModel
+            {
+                BillGroup = [],
+                CategoryList = _billCategoryRepository.GetAll(loggedUser)
+            };
+
+            LoadBarGraph(billList, model);
+
+            return View(model);
+        }
+
+
+        private void LoadBarGraph(IEnumerable<BillGraphItem> billList, BillGraphViewModel billGraphViewModel)
+        {
             List<DateTime> months = new();
 
             List<decimal> dueEarnPerMonth = new();
@@ -37,12 +71,7 @@ namespace OnlineBill.UI.Web.Controllers
             List<decimal?> paidLostPerMonth = new();
             List<decimal?> paidTotalPerMonth = new();
 
-            BillGraphViewModel billGraphViewModel = new BillGraphViewModel
-            {
-                BillGroup = []
-            };
-
-            int minYear = billList.Select(bill => bill.DueDate.Year).Min(); 
+            int minYear = billList.Select(bill => bill.DueDate.Year).Min();
 
             int yearNumbers = GetYearsQuantity(billList);
 
@@ -52,12 +81,13 @@ namespace OnlineBill.UI.Web.Controllers
 
                 for (int month = 1; month <= 12; month++)
                 {
-                    var billsPerMonth = billList.Where(bill => (bill.DueDate.Month == month &&
-                                                               bill.DueDate.Year == year) ||
-                                                               (bill.PaymentDate?.Month == month &&
-                                                               bill.PaymentDate?.Year == year)).ToList();
+                    var dueBillsPerMonth = billList.Where(bill => bill.DueDate.Month == month &&
+                                                               bill.DueDate.Year == year).ToList();
 
-                    if (billsPerMonth.Count == 0)
+                    var paidBillsPerMonth = billList.Where(bill => bill.PaymentDate?.Month == month &&
+                                                                   bill.PaymentDate?.Year == year).ToList();
+
+                    if (dueBillsPerMonth.Count == 0 && paidBillsPerMonth.Count == 0)
                     {
                         dueEarnPerMonth.Add(0);
                         dueLostPerMonth.Add(0);
@@ -66,19 +96,17 @@ namespace OnlineBill.UI.Web.Controllers
                         paidEarnPerMonth.Add(0);
                         paidLostPerMonth.Add(0);
                         paidTotalPerMonth.Add(0);
+
                         continue;
                     }
 
                     var billGroup = new BillGraphGroupPerMonth
                     {
-                        BillList = billsPerMonth,
-                        Month = month,
-                        
-                        DueEarnValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill.Value),
-                        DueLostValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.Value),
+                        DueEarnValue = dueBillsPerMonth.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill.Value),
+                        DueLostValue = dueBillsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.Value),
 
-                        PaidEarnValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill.PaidValue),
-                        PaidLostValue = billsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.PaidValue),
+                        PaidEarnValue = paidBillsPerMonth.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill.PaidValue),
+                        PaidLostValue = paidBillsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.PaidValue),
                     };
 
                     billGroup.DueTotalValue = billGroup.DueEarnValue + billGroup.DueLostValue;
@@ -95,7 +123,7 @@ namespace OnlineBill.UI.Web.Controllers
                     paidTotalPerMonth.Add(billGroup.PaidTotalValue);
                 }
             }
-            
+
             ViewBag.Months = GenerateMonths(billList);
 
             ViewBag.DueEarns = dueEarnPerMonth;
@@ -105,11 +133,9 @@ namespace OnlineBill.UI.Web.Controllers
             ViewBag.PaidEarns = paidEarnPerMonth;
             ViewBag.PaidLosts = paidLostPerMonth;
             ViewBag.PaidTotals = paidTotalPerMonth;
-
-            return View(billGraphViewModel);
         }
 
-        private IEnumerable<string> GenerateMonths(IEnumerable<Bill> billList)
+        private IEnumerable<string> GenerateMonths(IEnumerable<BillGraphItem> billList)
         {
             List<string> months = new();
 
@@ -134,7 +160,7 @@ namespace OnlineBill.UI.Web.Controllers
             return months;
         }
 
-        private int GetYearsQuantity(IEnumerable<Bill> billList)
+        private int GetYearsQuantity(IEnumerable<BillGraphItem> billList)
         {
             var maxYear = billList.Select(bill => bill.DueDate.Year).Max();
             var minYear = billList.Select(bill => bill.DueDate.Year).Min();

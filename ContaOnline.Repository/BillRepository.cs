@@ -51,13 +51,11 @@ namespace OnlineBill.Repository
             return Database.QueryCollection<BillListItem>(storedProcedure, new { userId = userId });
         }
 
-        IEnumerable<BillListItem> IBillRepository.GetByFilter(BillFilter filter)
+        public IEnumerable<BillListItem> GetByFilter(BillFilter filter)
         {
             string storedProcedure = "spr_bill_get_between_dates";
 
-            var filterList = new List<BillListItem>();
-
-            filterList = GetByUser(filter.UserId).ToList();
+            var filterList = GetByUser(filter.UserId).ToList();
 
             if (filter.InitialDate != null)
                 filterList = filterList.Where(item => item.DueDate >= filter.InitialDate).ToList();
@@ -68,8 +66,8 @@ namespace OnlineBill.Repository
             if (filter.CheckingAccountId != null)
                 filterList = filterList.Where(item => item.CheckingAccountId == filter.CheckingAccountId).ToList();
 
-            if (filter.BillCategoryId != null)
-                filterList = filterList.Where(item => item.BillCategoryId == filter.BillCategoryId).ToList();
+            if (filter.CategoryId != null)
+                filterList = filterList.Where(item => item.CategoryId == filter.CategoryId).ToList();
 
             return filterList;
         }
@@ -81,11 +79,29 @@ namespace OnlineBill.Repository
             return Database.QueryEntity<BillExhibitViewModel>(storedProcedure, new { id = id });
         }
 
-        public IEnumerable<Bill> GetAllInDetail(string userId)
+        public IEnumerable<BillGraphItem> GetAllInDetail(string userId)
         {
             string storedProcedure = "spr_bill_get_all_in_detail";
 
-            return Database.QueryCollection<Bill>(storedProcedure, new { userId = userId });
+            return Database.QueryCollection<BillGraphItem>(storedProcedure, new { userId = userId });
+        }
+
+        public IEnumerable<BillGraphItem> GetByGraphFilter(BillFilter filter)
+        {
+            string storedProcedure = "spr_bill_get_between_dates";
+
+            var filterList = GetAllInDetail(filter.UserId).ToList();
+
+            if (filter.InitialDate != null)
+                filterList = filterList.Where(item => item.DueDate >= filter.InitialDate).ToList();
+
+            if (filter.FinalDate != null)
+                filterList = filterList.Where(item => item.DueDate <= filter.FinalDate).ToList();
+
+            if (filter.CategoryId != null)
+                filterList = filterList.Where(item => item.CategoryId == filter.CategoryId).ToList();
+
+            return filterList;
         }
 
         public IEnumerable<string> Validate()

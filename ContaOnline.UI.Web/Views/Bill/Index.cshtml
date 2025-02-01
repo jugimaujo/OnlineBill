@@ -38,7 +38,7 @@
 
         <div class="col-auto">
             <label asp-for="@Model.BillCategoryList" class="control-label">Categoria:</label>
-            <select asp-for="@Model.Filter.BillCategoryId" class="form-control">
+            <select asp-for="@Model.Filter.CategoryId" class="form-control">
                 <option value="@null"></option>
                 @foreach (var item in Model.BillCategoryList)
                 {

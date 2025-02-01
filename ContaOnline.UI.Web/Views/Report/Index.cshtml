@@ -27,10 +27,36 @@
 
 <h2>Relatórios de contas</h2>
 
-<button id="dueDateButton">Ganho e Perda a vencer</button>
-<button id="totalDueDateButton">Valores Totais a vencer</button>
-<button id="payDateButton">Ganho e Perda pagos</button>
-<button id="totalPayDateButton">Valores Totais pagos</button>
+<hr />
+
+<div id="filter">
+	<form method="post" class="row g-3">
+		<div class="col-auto" style="display: flex; align-items: flex-end">
+			<label for="category" class="form-label">Categoria:</label>
+		</div>
+		<div class="col-auto">
+			<select asp-for="@Model.Filter.CategoryId" id="category" class="form-control">
+				<option value="@null">Todas</option>
+				@foreach (var item in Model.CategoryList)
+				{
+					<option value="@item.Id">@item.Name</option>
+				}
+			</select>
+		</div>
+		<div class="col-auto">
+			<button class="btn btn-outline-light"><i class="bi bi-funnel"></i> Filtrar</button>
+		</div>
+	</form>
+</div>
+
+<br />
+
+<div id="actionButtons" style="text-align: center;">
+	<button id="dueDateButton" class="btn btn-outline-primary btn-sm">Ganho e Perda a vencer</button>
+	<button id="totalDueDateButton" class="btn btn-outline-primary btn-sm">Valores Totais a vencer</button> |
+	<button id="payDateButton" class="btn btn-outline-primary btn-sm">Ganho e Perda pagos</button>
+	<button id="totalPayDateButton" class="btn btn-outline-primary btn-sm">Valores Totais pagos</button>
+</div>
 
 <canvas id="graph" width="400" height="150">
 </canvas>
@@ -121,34 +147,53 @@
 		
 
 		//actions
-		function showDueDateValues() {
+		function showDueDateValues(clickedButton) {
+			colorButton(clickedButton)
 			graph.data = dataDueDateValues;
 			graph.options.plugins.title.text = 'Ganho e Perda (de vencimento) X Mês'
 			graph.update();
 		}
 
-		function showTotalDueDateValues() {
+		function showTotalDueDateValues(clickedButton) {
+			colorButton(clickedButton);
 			graph.data = dataTotalDueDateValues;
 			graph.options.plugins.title.text = 'Total (de vencimento) X Mês'
 			graph.update();
 		}
 
-		function showPayDateValues() {
+		function showPayDateValues(clickedButton) {
+			colorButton(clickedButton);
 			graph.data = dataPaidDateValues;
 			graph.options.plugins.title.text = 'Ganho e Perda (pagos) X Mês'
 			graph.update();
 		}
 
-		function showTotalPayDateValues() {
+		function showTotalPayDateValues(clickedButton) {
+			colorButton(clickedButton);
 			graph.data = dataTotalPayDateValues;
 			graph.options.plugins.title.text = 'Total (pago) X Mês'
 			graph.update();
 		}
 
-		document.querySelector('#dueDateButton').addEventListener('click', showDueDateValues);
-		document.querySelector('#totalDueDateButton').addEventListener('click', showTotalDueDateValues);
-		document.querySelector('#payDateButton').addEventListener('click', showPayDateValues);
-		document.querySelector('#totalPayDateButton').addEventListener('click', showTotalPayDateValues);
+		document.querySelector('#dueDateButton').addEventListener('click', function() {showDueDateValues('dueDateButton')} );
+		document.querySelector('#totalDueDateButton').addEventListener('click', function() {showTotalDueDateValues('totalDueDateButton')} );
+		document.querySelector('#payDateButton').addEventListener('click', function() {showPayDateValues('payDateButton')} );
+		document.querySelector('#totalPayDateButton').addEventListener('click', function() {showTotalPayDateValues('totalPayDateButton')} );
+
+		function colorButton(clickedButton)
+		{
+			buttons = ['dueDateButton', 'totalDueDateButton', 'payDateButton', 'totalPayDateButton']
+
+			buttons = buttons.filter(button => button != clickedButton)
+
+			document.getElementById(clickedButton).className = 'btn btn-primary btn-sm';
+
+			buttons.forEach((button) =>
+				document.getElementById(button).className = 'btn btn-outline-primary btn-sm'
+			);
+		}
+
+		colorButton('dueDateButton');
 
 		});
 
