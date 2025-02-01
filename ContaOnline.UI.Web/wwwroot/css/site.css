@@ -46,3 +46,15 @@ ul.hover :hover {
     white-space: nowrap;
     text-align: right;
 }
+
+.pizza-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+/*.pizza-graph {
+    width: 50% !important;
+    height: 50% !important;
+}*/

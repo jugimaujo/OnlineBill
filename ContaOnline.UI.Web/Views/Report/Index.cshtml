@@ -1,5 +1,7 @@
 ﻿@model OnlineBill.Domain.Models.BillGraphViewModel
 @using Newtonsoft.Json
+@using System
+@using System.Linq
 
 @{
 	ViewData["Title"] = "Relatórios";
@@ -14,6 +16,10 @@
 	List<decimal?> paidLostPerMonth = ViewBag.PaidLosts;
 	List<decimal?> paidTotalPerMonth = ViewBag.PaidTotals;
 
+	List<decimal> totalEarnPerCategory = ViewBag.PizzaTotalEarn;
+	List<decimal> totalLostPerCategory = ViewBag.PizzaTotalLost;
+	List<string> categories = ViewBag.Categories;
+
 	var monthSerialize = Html.Raw(JsonConvert.SerializeObject(months));
 
 	var dueEarnPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(dueEarnPerMonth));
@@ -23,6 +29,10 @@
 	var paidEarnPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(paidEarnPerMonth));
 	var paidLostPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(paidLostPerMonth));
 	var paidTotalPerMonthSerialize = Html.Raw(JsonConvert.SerializeObject(paidTotalPerMonth));
+
+	var totalEarnPerCategorySerialize = Html.Raw(JsonConvert.SerializeObject(totalEarnPerCategory));
+	var totalLostPerCategorySerialize = Html.Raw(JsonConvert.SerializeObject(totalLostPerCategory));
+	var categoriesSerialize = Html.Raw(JsonConvert.SerializeObject(categories));
 }
 
 <h2>Relatórios de contas</h2>
@@ -61,12 +71,27 @@
 <canvas id="graph" width="400" height="150">
 </canvas>
 
+<hr />
+
+<div id="pizzaContainer" class="pizza-container">
+	<div style="width: 400px; height: 400px;">
+		<canvas id="totalEarnPizza" class="pizza-graph" width="400" height="400">
+		</canvas>
+	</div>
+	<div style="width: 400px; height: 400px;">
+		<canvas id="totalLostPizza" class="pizza-graph" width="400" height="400">
+		</canvas>
+	</div>
+</div>
+
+
 @section Scripts {
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 	<script>
 		$(document).ready(function() {
 		//datas
+			//Bar Graph:
 		const dataDueDateValues = {
 			labels: @monthSerialize,
 			datasets: [
@@ -121,7 +146,28 @@
 			]
 		};
 
-		//config
+			//Pizza Graph
+		const totalEarnPerCategory = {
+			labels: @categoriesSerialize,
+			datasets: [
+				{
+					label: 'Ganho',
+					data: @totalEarnPerCategorySerialize,
+				}
+			]
+		}
+
+		const totalLostPerCategory = {
+			labels: @categoriesSerialize,
+			datasets: [
+				{
+					label: 'Perda',
+					data: @totalLostPerCategorySerialize,
+				}
+			]
+		}
+
+		//config Bar Graph
 		const config = {
 			type: 'bar',
 			data: dataDueDateValues,
@@ -144,7 +190,84 @@
 
 		const ctx = $('#graph')
 		const graph = new Chart(ctx, config);
-		
+
+		// Footer for pizza graph
+		const footer = (tooltipItems) => {
+
+		  let total;
+
+		  if (tooltipItems[0].dataset.label == 'Ganho')
+		  {
+			  total = @Html.Raw(JsonConvert.SerializeObject(totalEarnPerCategory.Sum()));
+		  }
+		  else if (tooltipItems[0].dataset.label == 'Perda')
+		  {
+			  total = @Html.Raw(JsonConvert.SerializeObject(totalLostPerCategory.Sum()));
+		  }
+
+		  let percentage = tooltipItems[0].parsed * 100 / total;
+
+		  return Math.round(percentage) + '%';
+		};
+
+		//config Pizza Graph
+			//Total Earn
+		const configPizzaEarn = {
+			type: 'pie',
+			data: totalEarnPerCategory,
+			options: {
+				legends: {
+					display: true,
+				},
+				responsive: true,
+				plugins: {
+					tooltip: {
+						callbacks: {
+							footer: footer,
+						}
+					},
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Ganho X Categoria'
+					}
+				}
+			},
+		};
+
+		const ctxTotalEarnPizza = $('#totalEarnPizza')
+		const totalEarnPizzaGraph = new Chart(ctxTotalEarnPizza, configPizzaEarn);
+
+			//Total Lost
+		const configPizzaLost = {
+			type: 'pie',
+			data: totalLostPerCategory,
+			options: {
+				legends: {
+					display: false,
+				},
+				responsive: true,
+				plugins: {
+					tooltip: {
+						callbacks: {
+							footer: footer
+						}
+					},
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Perda X Categoria'
+					}
+				}
+			},
+		};
+
+		const ctxTotalLostPizza = $('#totalLostPizza')
+		const totalLostPizzaGraph = new Chart(ctxTotalLostPizza, configPizzaLost);
 
 		//actions
 		function showDueDateValues(clickedButton) {

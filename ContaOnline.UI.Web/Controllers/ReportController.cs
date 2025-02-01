@@ -31,11 +31,14 @@ namespace OnlineBill.UI.Web.Controllers
 
             BillGraphViewModel billGraphViewModel = new BillGraphViewModel
             {
-                BillGroup = [],
+                BillGroupBarGraph = [],
+                BillGroupPizzaGraph = [],
                 CategoryList = _billCategoryRepository.GetAll(loggedUser)
             };
 
             LoadBarGraph(billList, billGraphViewModel);
+
+            LoadPizzaGraph(billList, billGraphViewModel);
 
             return View(billGraphViewModel);
         }
@@ -45,15 +48,20 @@ namespace OnlineBill.UI.Web.Controllers
         {
             model.Filter.UserId = loggedUser;
 
+            var billListNoFilter = _billRepository.GetAllInDetail(loggedUser);
+
             var billList = _billRepository.GetByGraphFilter(model.Filter);
 
             model = new BillGraphViewModel
             {
-                BillGroup = [],
+                BillGroupBarGraph = [],
+                BillGroupPizzaGraph = [],
                 CategoryList = _billCategoryRepository.GetAll(loggedUser)
             };
 
             LoadBarGraph(billList, model);
+
+            LoadPizzaGraph(billListNoFilter, model);
 
             return View(model);
         }
@@ -100,7 +108,7 @@ namespace OnlineBill.UI.Web.Controllers
                         continue;
                     }
 
-                    var billGroup = new BillGraphGroupPerMonth
+                    var billGroup = new BillGroupBarGraph
                     {
                         DueEarnValue = dueBillsPerMonth.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill.Value),
                         DueLostValue = dueBillsPerMonth.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => -bill.Value),
@@ -112,7 +120,7 @@ namespace OnlineBill.UI.Web.Controllers
                     billGroup.DueTotalValue = billGroup.DueEarnValue + billGroup.DueLostValue;
                     billGroup.PaidTotalValue = billGroup.PaidEarnValue + billGroup.PaidLostValue;
 
-                    billGraphViewModel.BillGroup.Add(billGroup);
+                    billGraphViewModel.BillGroupBarGraph.Add(billGroup);
 
                     dueEarnPerMonth.Add(billGroup.DueEarnValue);
                     dueLostPerMonth.Add(billGroup.DueLostValue);
@@ -133,6 +141,47 @@ namespace OnlineBill.UI.Web.Controllers
             ViewBag.PaidEarns = paidEarnPerMonth;
             ViewBag.PaidLosts = paidLostPerMonth;
             ViewBag.PaidTotals = paidTotalPerMonth;
+        }
+
+        private void LoadPizzaGraph(IEnumerable<BillGraphItem> billList, BillGraphViewModel billGraphViewModel)
+        {
+            List<decimal> totalEarnPerCategory = new();
+            List<decimal> totalLostPerCategory = new();
+            List<string> categoryNames = new();
+
+            var billGroupPerCategory = billList.GroupBy(bill => bill.CategoryName).ToList();
+
+            foreach (var billGroup in billGroupPerCategory)
+            {
+                var billGroupPizzaGraph = new BillGroupPizzaGraph
+                {
+                    TotalEarn = billGroup.Where(bill => bill.Type == PayReceive.Receive).Sum(bill => bill?.PaidValue != null ? bill?.PaidValue : bill?.Value),
+                    TotalLost = billGroup.Where(bill => bill.Type == PayReceive.Pay).Sum(bill => bill?.PaidValue != null ? bill?.PaidValue : bill?.Value),
+                    CategoryName = billGroup.Key
+                };
+
+                totalEarnPerCategory.Add(billGroupPizzaGraph.TotalEarn ?? 0);
+                totalLostPerCategory.Add(billGroupPizzaGraph.TotalLost ?? 0);
+                categoryNames.Add(billGroupPizzaGraph.CategoryName);
+
+                billGraphViewModel.BillGroupPizzaGraph.Add(billGroupPizzaGraph);
+            }
+
+            List<int> totalEarnPercent = new();
+            List<int> totalLostPercent = new();
+
+            //var totalEarn = totalEarnPerCategory.Sum(earn => earn.HasValue ? earn.Value : 0);
+
+            //for (int i = 0; i < totalEarnPerCategory.Count; i++)
+            //    totalEarnPercent.Add(GetPercentage(totalEarn, totalEarnPerCategory[i]));
+
+            //for (int i = 0; i < totalLostPerCategory.Count; i++)
+            //    totalLostPercent.Add(GetPercentage(totalEarn, totalLostPerCategory[i]));
+
+
+            ViewBag.PizzaTotalEarn = totalEarnPerCategory;
+            ViewBag.PizzaTotalLost = totalLostPerCategory;
+            ViewBag.Categories = categoryNames;
         }
 
         private IEnumerable<string> GenerateMonths(IEnumerable<BillGraphItem> billList)
@@ -166,6 +215,13 @@ namespace OnlineBill.UI.Web.Controllers
             var minYear = billList.Select(bill => bill.DueDate.Year).Min();
 
             return (maxYear - minYear) + 1;
+        }
+
+        private int GetPercentage(decimal total, decimal? part)
+        {
+            var partPercentage = part == null ? 0 : part * 100 / total;
+
+            return (int)partPercentage;
         }
     }
 }
