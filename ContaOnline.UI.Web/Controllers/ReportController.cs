@@ -98,7 +98,9 @@ namespace OnlineBill.UI.Web.Controllers
                 for (int month = 1; month <= 12; month++)
                 {
                     var dueBillsPerMonth = billList.Where(bill => bill.DueDate.Month == month &&
-                                                               bill.DueDate.Year == year).ToList();
+                                                               bill.DueDate.Year == year &&
+                                                               bill.PaymentDate == null &&
+                                                               bill.PaidValue == null).ToList();
 
                     var paidBillsPerMonth = billList.Where(bill => bill.PaymentDate?.Month == month &&
                                                                    bill.PaymentDate?.Year == year).ToList();
