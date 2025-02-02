@@ -36,6 +36,9 @@ namespace OnlineBill.UI.Web.Controllers
                 CategoryList = _billCategoryRepository.GetAll(loggedUser)
             };
 
+            if (billList.Count() == 0)
+                return RedirectToAction("EmptyReport");
+
             LoadBarGraph(billList, billGraphViewModel);
 
             LoadPizzaGraph(billList, billGraphViewModel);
@@ -64,6 +67,11 @@ namespace OnlineBill.UI.Web.Controllers
             LoadPizzaGraph(billListNoFilter, model);
 
             return View(model);
+        }
+
+        public IActionResult EmptyReport()
+        {
+            return View();
         }
 
 
