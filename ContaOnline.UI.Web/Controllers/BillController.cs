@@ -61,9 +61,11 @@ namespace OnlineBill.UI.Web.Controllers
         }
 
         // GET: Bill/Details/
-        public IActionResult Details(int id)
+        public IActionResult Details(string id)
         {
-            return View();
+            var bill = _billRepository.GetDetailsById(id);
+
+            return View(bill);
         }
 
         // GET: Bill/Create

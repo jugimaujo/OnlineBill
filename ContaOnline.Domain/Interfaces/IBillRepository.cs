@@ -10,6 +10,7 @@ namespace OnlineBill.Domain.Interfaces
 {
     public interface IBillRepository : IRepository<Bill>
     {
+        BillDetails GetDetailsById(string id);
         BillExhibitViewModel GetBillExhibitById(string id);
         IEnumerable<BillListItem> GetByUser(string userId);
         IEnumerable<BillListItem> GetByFilter(BillFilter filter);

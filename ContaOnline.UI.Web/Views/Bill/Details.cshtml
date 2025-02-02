@@ -1,0 +1,122 @@
+﻿@model OnlineBill.Domain.Models.BillDetails
+@using OnlineBill.Domain.Models
+
+@{
+    ViewData["Title"] = "Detalhar Conta";
+}
+
+<h1>Detalhes</h1>
+
+<div>
+    <h4>Detalhes da conta</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Tipo
+        </dt>
+        <dd class = "col-sm-10">
+            @if (Model.Type == PayReceive.Pay)
+            {
+                <span>Pagar</span>
+            }
+
+            else
+            {
+                <span>Receber</span>
+            }
+        </dd>
+        <dt class = "col-sm-2">
+            Conta corrente
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CheckingAccountDescription)
+        </dd>
+        <dt class = "col-sm-2">
+            Categoria
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CategoryName)
+        </dd>
+        <dt class = "col-sm-2">
+            Contato
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ContactName)
+        </dd>
+        <dt class = "col-sm-2">
+            Descrição
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            Data de vencimento
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.DueDate.ToString("d")
+        </dd>
+        <dt class = "col-sm-2">
+            Valor
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Value.ToString("c")
+        </dd>
+
+        <hr />
+
+        @if (Model.PaymentDate != null)
+        {
+            <dt class = "col-sm-2">
+                Data de pagamento
+            </dt>
+            <dd class = "col-sm-10">
+                @Model.PaymentDate.ToString().Substring(0, 10)
+            </dd>
+            <dt class = "col-sm-2">
+                Desconto
+            </dt>
+            <dd class = "col-sm-10">
+                R$ @if (Model.Discount != null)
+                {
+                    @Model.Discount
+                }
+                else
+                {
+                    @("0,00")
+                }
+            </dd>
+            <dt class = "col-sm-2">
+                Acréscimo
+            </dt>
+            <dd class = "col-sm-10">
+                R$ @if (Model.Increase != null)
+                {
+                    @Model.Increase
+                }
+                else
+                {
+                    @("0,00")
+                }
+            </dd>
+            <dt class = "col-sm-2">
+                Valor pago
+            </dt>
+            <dd class = "col-sm-10">
+                R$ @if (Model.PaidValue != null)
+                {
+                    @Model.PaidValue
+                }
+                else
+                {
+                    @("0,00")
+                }
+            </dd>
+        }
+    </dl>
+</div>
+<div>
+    <div style="display: flex; justify-content: flex-end">
+        <button class="btn btn-secondary">@Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { style = "color: white;" })</button> | 
+        <a asp-action="Index"><input type="button" value="Voltar" class="btn btn-dark" /></a>
+    </div>
+</div>

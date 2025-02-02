@@ -44,6 +44,13 @@ namespace OnlineBill.Repository
             return Database.QueryEntity<Bill>(storedProcedure, new { id = id });
         }
 
+        public BillDetails GetDetailsById(string id)
+        {
+            string storedProcedure = "spr_bill_get_details_by_id";
+
+            return Database.QueryEntity<BillDetails>(storedProcedure, new { id = id });
+        }
+
         public IEnumerable<BillListItem> GetByUser(string userId)
         {
             string storedProcedure = "spr_bill_get_all";
