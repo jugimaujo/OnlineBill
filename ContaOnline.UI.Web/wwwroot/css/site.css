@@ -47,6 +47,11 @@ ul.hover :hover {
     text-align: right;
 }
 
+.buttons-at-end {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .pizza-container {
     width: 100%;
     display: flex;

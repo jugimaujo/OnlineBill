@@ -39,24 +39,30 @@
 
 <hr />
 
-<div id="filter">
-	<form method="post" class="row g-3">
-		<div class="col-auto" style="display: flex; align-items: flex-end">
-			<label for="category" class="form-label">Categoria:</label>
-		</div>
-		<div class="col-auto">
-			<select asp-for="@Model.Filter.CategoryId" id="category" class="form-control">
-				<option value="@null">Todas</option>
-				@foreach (var item in Model.CategoryList)
-				{
-					<option value="@item.Id">@item.Name</option>
-				}
-			</select>
-		</div>
-		<div class="col-auto">
-			<button class="btn btn-outline-light"><i class="bi bi-funnel"></i> Filtrar</button>
-		</div>
-	</form>
+<div style="display: flex; justify-content: space-between;">
+	<div id="filter">
+		<form method="post" class="row g-3">
+			<div class="col-auto" style="display: flex; align-items: flex-end">
+				<label for="category" class="form-label">Categoria:</label>
+			</div>
+			<div class="col-auto">
+				<select asp-for="@Model.Filter.CategoryId" id="category" class="form-control">
+					<option value="@null">Todas</option>
+					@foreach (var item in Model.CategoryList)
+					{
+						<option value="@item.Id">@item.Name</option>
+					}
+				</select>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-outline-light"><i class="bi bi-funnel"></i> Filtrar</button>
+			</div>
+		</form>
+	</div>
+	<div>
+		<a asp-controller="Bill" asp-action="Index"><button class="btn btn-success"><i class="bi bi-receipt"></i> Contas</button></a>
+		<a asp-controller="App" asp-action="Home"><input type="button" value="Voltar" class="btn btn-dark" /></a>
+	</div>
 </div>
 
 <br />

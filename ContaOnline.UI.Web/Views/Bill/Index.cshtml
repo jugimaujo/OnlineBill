@@ -13,44 +13,49 @@
 
 <hr />
 
-<div class="filter">
-    <form method="post" class="row g-3">
-        <div class="col-auto">
-            <label asp-for="@Model.Filter.InitialDate" class="control-label">Data inicial:</label>
-            <input asp-for="@Model.Filter.InitialDate" class="form-control" type="date" />
-        </div>
+<div style="display: flex; justify-content: space-between;">
+    <div class="filter">
+        <form method="post" class="row g-3">
+            <div class="col-auto">
+                <label asp-for="@Model.Filter.InitialDate" class="control-label">Data inicial:</label>
+                <input asp-for="@Model.Filter.InitialDate" class="form-control" type="date" />
+            </div>
 
-        <div class="col-auto">
-            <label asp-for="@Model.Filter.FinalDate" class="control-label">Data final:</label>
-            <input asp-for="@Model.Filter.FinalDate" class="form-control" type="date" />
-        </div>
+            <div class="col-auto">
+                <label asp-for="@Model.Filter.FinalDate" class="control-label">Data final:</label>
+                <input asp-for="@Model.Filter.FinalDate" class="form-control" type="date" />
+            </div>
 
-        <div class="col-auto">
-            <label asp-for="@Model.CheckingAccountList" class="control-label">Conta corrente:</label>
-            <select asp-for="@Model.Filter.CheckingAccountId" class="form-control">
-                <option value="@null"></option>
-                @foreach (var item in Model.CheckingAccountList)
-                {
-                    <option value="@item.Id">@item.Description</option>
-                }
-            </select>
-        </div>
+            <div class="col-auto">
+                <label asp-for="@Model.CheckingAccountList" class="control-label">Conta corrente:</label>
+                <select asp-for="@Model.Filter.CheckingAccountId" class="form-control">
+                    <option value="@null"></option>
+                    @foreach (var item in Model.CheckingAccountList)
+                    {
+                        <option value="@item.Id">@item.Description</option>
+                    }
+                </select>
+            </div>
 
-        <div class="col-auto">
-            <label asp-for="@Model.BillCategoryList" class="control-label">Categoria:</label>
-            <select asp-for="@Model.Filter.CategoryId" class="form-control">
-                <option value="@null"></option>
-                @foreach (var item in Model.BillCategoryList)
-                {
-                    <option value="@item.Id">@item.Name</option>
-                }
-            </select>
-        </div>
+            <div class="col-auto">
+                <label asp-for="@Model.BillCategoryList" class="control-label">Categoria:</label>
+                <select asp-for="@Model.Filter.CategoryId" class="form-control">
+                    <option value="@null"></option>
+                    @foreach (var item in Model.BillCategoryList)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+            </div>
 
-        <div class="col-auto" style="display: flex; align-items: flex-end;">
-            <button class="btn btn-secondary"><i class="bi bi-funnel"></i> Filtrar</button>
-        </div>
-    </form>
+            <div class="col-auto" style="display: flex; align-items: flex-end;">
+                <button class="btn btn-secondary"><i class="bi bi-funnel"></i> Filtrar</button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <a asp-controller="Report" asp-action="Index"><button class="btn btn-warning"><i class="bi bi-bar-chart-line-fill"></i> Relatório</button></a>
+    </div>
 </div>
 
 <br /> <br />
@@ -117,4 +122,6 @@
 </table>
 }
 
-<a asp-controller="App" asp-action="Home"><input type="button" value="Voltar" class="btn btn-dark" /></a>
+<div class="buttons-at-end">
+    <a asp-controller="App" asp-action="Home"><input type="button" value="Voltar" class="btn btn-dark" /></a>
+</div>
