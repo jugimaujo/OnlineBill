@@ -47,6 +47,43 @@ ul.hover :hover {
     text-align: right;
 }
 
+.table-sort th {
+    position: relative;
+    user-select: none;
+}
+
+.table-sort th:hover {
+    background-color: #0001;
+    cursor: pointer;
+}
+
+.table-sort th::after {
+    content: '\25b4';
+    position: absolute;
+    right: 0;
+    font-size: inherit;
+    transform-origin: center;
+    transform: translate(-100%) rotate(180deg);
+}
+
+.table-sort th.asc {
+    background-color: #0001;
+}
+
+.table-sort th.asc::after {
+    font-size: inherit;
+    transform: translate(-100%) rotate(0deg);
+}
+
+.table-sort th.table-head-command::after {
+    content: none;
+}
+
+.table-sort th.table-head-command:hover {
+    background-color: #B0BEC5;
+    cursor: default;
+}
+
 .buttons-at-end {
     display: flex;
     justify-content: flex-end;

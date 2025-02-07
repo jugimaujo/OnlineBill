@@ -62,7 +62,7 @@
 
 @if (Model.BillList.Count() > 0)
 {
-<table class="table">
+<table class="table table-sort">
     <thead>
         <tr>
             <th>
@@ -83,7 +83,7 @@
             <th>
                 Valor
             </th>
-            <th></th>
+            <th class="table-head-command"></th>
         </tr>
     </thead>
     <tbody>
@@ -125,3 +125,7 @@
 <div class="buttons-at-end">
     <a asp-controller="App" asp-action="Home"><input type="button" value="Voltar" class="btn btn-dark" /></a>
 </div>
+
+@section Scripts {
+    <script src="~/sort_table.js"></script>
+}
