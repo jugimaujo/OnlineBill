@@ -89,6 +89,40 @@ ul.hover :hover {
     justify-content: flex-end;
 }
 
+#cards-container {
+    margin-top: 3%;
+}
+
+.card-button {
+    border: none;
+    background-color: transparent;
+    width: 75%;
+    text-align: left;
+    color: white;
+}
+
+.card {
+    background-color: #444;
+}
+
+.card:hover {
+    background-color: #333A;
+}
+
+.card-image {
+    display: flex;
+    margin-left: 1rem;
+    min-width: 3rem;
+    font-size: 2.5rem;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.card div.card-text {
+    padding-left: 2px;
+}
+
 .pizza-container {
     width: 100%;
     display: flex;

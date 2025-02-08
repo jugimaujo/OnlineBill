@@ -35,7 +35,9 @@ namespace OnlineBill.UI.Web.Controllers
 
         public IActionResult Login()
         {
-            return View();
+            var logins = LoadLoginViewModelList();
+
+            return View(logins);
         }
 
         [HttpPost]
@@ -48,33 +50,37 @@ namespace OnlineBill.UI.Web.Controllers
 
             if (user == null)
             {
-                loginViewModel.Message = "Usuário ou senha inexistente";
+                var logins = LoadLoginViewModelList();
+
+                _toastrService.AddErrorToastMessage("Email ou senha foram digitados incorretamente.",
+                    new ToastrOptions { Title = "Erro ao logar" });
+
+                return View(logins);
             }
-            else
+
+            if (loginViewModel.NotRememberMe != null && loginViewModel.NotRememberMe == true)
+                _userRepository.UpdateRememberMe(user.Id, false);
+
+            else if (loginViewModel.RememberMe == true && user.RememberMe != true)
+                _userRepository.UpdateRememberMe(user.Id, true);
+
+            var claims = new List<Claim>
             {
-                //_appHelper.RegisterUser(user);
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim("userId", user.Id)
+            };
 
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.Name),
-                    new Claim("userId", user.Id)
-                };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
 
-                var principal = new ClaimsPrincipal(identity);
+            HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
 
-                HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme, principal).Wait();
+            _toastrService.AddSuccessToastMessage("Você fez login com sucesso",
+                new ToastrOptions { Title = "Login" });
 
-                _toastrService.AddSuccessToastMessage("Você fez login com sucesso",
-                    new ToastrOptions { Title = "Login" });
-
-                return RedirectToAction("Home", "App");
-            }
-
-            return View(loginViewModel);
-
+            return RedirectToAction("Home", "App");
         }
 
         public IActionResult Logout()
@@ -139,6 +145,28 @@ namespace OnlineBill.UI.Web.Controllers
         public IActionResult About()
         {
             return View();
+        }
+
+        private IEnumerable<LoginViewModel> LoadLoginViewModelList()
+        {
+            IEnumerable<User> usersList = _userRepository.GetAll();
+
+            var rememberedUsers = usersList.Where(user => user.RememberMe == true);
+
+            var logins = new List<LoginViewModel>();
+
+            foreach (var user in rememberedUsers)
+            {
+                logins.Add(new LoginViewModel
+                {
+                    Name = user.Name,
+                    Email = user.Email,
+                    Password = user.Password,
+                    RememberMe = user.RememberMe ?? false
+                });
+            }
+
+            return logins;
         }
     }
 }

@@ -7,5 +7,6 @@ namespace OnlineBill.Domain.Interfaces
     {
         IEnumerable<User> GetAll();
         User GetByEmailPassword(string email, string password);
+        void UpdateRememberMe(string id, bool rememberMe);
     }
 }

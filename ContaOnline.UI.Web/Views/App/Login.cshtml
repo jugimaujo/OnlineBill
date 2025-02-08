@@ -1,7 +1,13 @@
-﻿@model OnlineBill.UI.Web.Models.LoginViewModel
+﻿@model IEnumerable<LoginViewModel>
+@using OnlineBill.UI.Web.Models
+@using Newtonsoft.Json
 
 @{
 	ViewData["Title"] = "Login";
+
+	// List<LoginViewModel> logins = ViewBag.Logins;
+
+	// var loginsSerialize = Html.Raw(JsonConvert.SerializeObject(logins));
 }
 
 <h2>Login</h2>
@@ -10,12 +16,6 @@
 
 <form method="post">
 	<div class="form-horizontal">
-		@if (Model != null)
-		{
-			<div class="container">
-				<div class="text-danger" id="message">@Model.Message</div>
-			</div>
-		}
 		<div class="form-group">
 			<label class="control-label" for="email">Email:</label>
 			<input class="form-control" type="text" name="email" id="email"/>
@@ -26,7 +26,71 @@
 		</div>
 		<br />
 		<div class="form-group">
+			<input class="form-check-input" id="remember-me" name="rememberMe" type="checkbox" value="false" />
+			<label class="form-check-label" for="remember-me">Lembrar de mim</label>
+		</div>
+		<br />
+		<div class="form-group">
 			<button class="btn btn-primary" type="submit">Enviar</button>
 		</div>
 	</div>
 </form>
+
+@if (Model.Any(item => item.RememberMe != false))
+{
+	<br /> <br />
+	<h4>Login rápido:</h4>
+}
+
+<div id="cards-container">
+@foreach (var item in Model)
+{
+	<div id="card">
+		<form method="post">
+			<button class="card-button">
+				<div class="card">
+					<div class="row g-0">
+						<div class="card-image col-auto">
+							<i class="bi bi-person-circle"></i>
+						</div>
+						<div class="card-body col-auto">
+							<div class="card-text">
+								<span><strong>@item.Name</strong></span> <br />
+								<span><strong>@item.Email</strong></span>
+
+								<div id="hidden-inputs" hidden>
+									<input name="email" value="@item.Email" />
+									<input name="password" value="@item.Password" />
+									<input name="rememberMe" type="checkbox" value="true" checked/>
+								</div>
+							</div>
+						</div>
+						<div class="card-body not-remember-me col-auto">
+							<input id="not-remember-me-input" name="notRememberMe" type="checkbox" value="false" />
+							<label class="form-check-label" for="not-remember-me-input">Não lembrar mais de mim</label>
+						</div>
+					</div>
+				</div>
+			</button>
+		</form>
+	</div>
+}
+</div>
+
+@section Scripts {
+	<script>
+
+		const rememberMeInput = document.querySelector('#remember-me');
+
+		rememberMeInput.addEventListener('click', function() {
+			this.value = this.value == 'true' ? false : 'true';
+		});
+		
+		const notRememberMeInput = document.querySelector('#not-remember-me-input');
+
+		notRememberMeInput.addEventListener('click', function() {
+			this.value = this.value == 'true' ? false : 'true';
+		});
+
+	</script>
+}

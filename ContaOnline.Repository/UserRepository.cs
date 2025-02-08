@@ -48,6 +48,13 @@ namespace OnlineBill.Repository
             return Database.QueryEntity<User>(storedProcedure, new { email = email, password = password });
         }
 
+        public void UpdateRememberMe(string id, bool rememberMe)
+        {
+            string storedProcedure = "spr_user_update_remember_me";
+
+            Database.Execute(storedProcedure, new { id = id, rememberMe = rememberMe });
+        }
+
         public IEnumerable<string> Validate()
         {
             throw new NotImplementedException();
