@@ -62,6 +62,6 @@ app.UseCookiePolicy();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=App}/{action=Home}/{id?}");
+    pattern: "{controller=App}/{action=Index}/{id?}");
 
 app.Run();

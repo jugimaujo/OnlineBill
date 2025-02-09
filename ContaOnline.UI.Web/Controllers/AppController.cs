@@ -28,7 +28,7 @@ namespace OnlineBill.UI.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
-        public IActionResult Home()
+        public IActionResult Index()
         {
             return View();
         }
