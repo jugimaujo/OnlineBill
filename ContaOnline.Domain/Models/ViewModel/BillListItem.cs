@@ -15,6 +15,8 @@ namespace OnlineBill.Domain.Models
         public string Contact {  get; set; }
         public string Category { get; set; }
         public decimal Value { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public decimal? PaidValue { get; set; }
 
         public string CategoryId { get; set; }
         public string CheckingAccountId { get; set; }

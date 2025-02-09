@@ -75,11 +75,11 @@ ul.hover :hover {
     transform: translate(-100%) rotate(0deg);
 }
 
-.table-sort th.table-head-command::after {
+.table-sort th.undecorate-table-head::after {
     content: none;
 }
 
-.table-sort th.table-head-command:hover {
+.table-sort th.undecorate-table-head:hover {
     background-color: #B0BEC5;
     cursor: default;
 }

@@ -80,7 +80,7 @@ namespace OnlineBill.UI.Web.Controllers
             _toastrService.AddSuccessToastMessage("Você fez login com sucesso",
                 new ToastrOptions { Title = "Login" });
 
-            return RedirectToAction("Home", "App");
+            return RedirectToAction("Index", "App");
         }
 
         public IActionResult Logout()

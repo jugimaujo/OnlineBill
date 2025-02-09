@@ -65,6 +65,7 @@
 <table class="table table-sort">
     <thead>
         <tr>
+            <th class="undecorate-table-head" width="0px"></th>
             <th>
                 Data de vencimento
             </th>
@@ -83,12 +84,33 @@
             <th>
                 Valor
             </th>
-            <th class="table-head-command"></th>
+            <th class="undecorate-table-head"></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.BillList) {
-        <tr>
+        <tr style="background-color: @((item.PaidValue != null || item.PaymentDate != null) ? "#0B06" : "inherit") ">
+            <td>
+                @if (item.PaidValue == null || item.PaymentDate == null)
+                {
+                    @if ((item.DueDate - DateTime.Now).Days <= 14 && (item.DueDate - DateTime.Now).Days > 0)
+                    {
+                        <i class="bi bi-eye-fill"></i>
+                    }
+                    else if ((item.DueDate - DateTime.Now).Days <= 5 && (item.DueDate - DateTime.Now).Days > 0)
+                    {
+                        <i class="bi bi-clock-fill"></i>
+                    }
+                    else if ((item.DueDate - DateTime.Now).Days < 0)
+                    {
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                    }
+                }
+                else
+                {
+                    <i class="bi-check-circle-fill"></i>
+                }
+            </td>
             <td>
                 @DateOnly.FromDateTime(item.DueDate).ToString()
             </td>
