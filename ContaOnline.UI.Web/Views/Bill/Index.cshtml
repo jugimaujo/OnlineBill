@@ -29,7 +29,7 @@
             <div class="col-auto">
                 <label asp-for="@Model.CheckingAccountList" class="control-label">Conta corrente:</label>
                 <select asp-for="@Model.Filter.CheckingAccountId" class="form-control">
-                    <option value="@null"></option>
+                    <option value="@null">Todos</option>
                     @foreach (var item in Model.CheckingAccountList)
                     {
                         <option value="@item.Id">@item.Description</option>
@@ -40,7 +40,7 @@
             <div class="col-auto">
                 <label asp-for="@Model.BillCategoryList" class="control-label">Categoria:</label>
                 <select asp-for="@Model.Filter.CategoryId" class="form-control">
-                    <option value="@null"></option>
+                    <option value="@null">Todos</option>
                     @foreach (var item in Model.BillCategoryList)
                     {
                         <option value="@item.Id">@item.Name</option>
@@ -89,7 +89,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model.BillList) {
-        <tr style="background-color: @((item.PaidValue != null || item.PaymentDate != null) ? "#0B06" : "inherit") ">
+        <tr style="background-color: @((item.PaidValue != null || item.PaymentDate != null) ? "#0B06" : "inherit")">
             <td>
                 @if (item.PaidValue == null || item.PaymentDate == null)
                 {
@@ -146,6 +146,22 @@
 
 <div class="buttons-at-end">
     <a asp-controller="App" asp-action="Index"><input type="button" value="Voltar" class="btn btn-dark" /></a>
+</div>
+
+<br />
+
+<div id="totals" class="d-flex justify-content-end">
+    <div class="d-flex justify-content-evenly w-50">
+        <div class="row text-center text-white bg-dark border border-5 border-dark rounded">
+                Total a vencer: <br /> @Model.TotalNotPaid.ToString("C")
+        </div>
+        <div class="row text-center text-danger bg-dark border border-5 border-dark rounded">
+                Total já vencido: <br /> @Model.TotalExpiredNotPaid.ToString("C")
+        </div>
+        <div class="row text-center text-success bg-dark border border-5 border-dark rounded">
+            Total já pago: <br /> @Model.TotalPaid.ToString("C")
+        </div>
+    </div>
 </div>
 
 @section Scripts {

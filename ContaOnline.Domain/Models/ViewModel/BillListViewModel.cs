@@ -12,5 +12,8 @@ namespace OnlineBill.Domain.Models
         public BillFilter Filter { get; set; }
         public IEnumerable<CheckingAccount> CheckingAccountList { get; set; }
         public IEnumerable<BillCategory> BillCategoryList { get; set; }
+        public decimal TotalNotPaid { get; set; }
+        public decimal TotalExpiredNotPaid { get; set; }
+        public decimal TotalPaid { get; set; }
     }
 }

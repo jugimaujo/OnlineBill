@@ -9,7 +9,23 @@
 
 <div>
     <h4>Detalhes da conta</h4>
+    @if (Model.PaymentDate != null || Model.PaidValue != null)
+    {
+        <span style="color: green;">
+            <i class="bi-check-circle-fill"></i> @if (Model.Type == PayReceive.Pay)
+            {
+                <span>Paga</span>
+            }
+
+            else
+            {
+                <span>Recebida</span>
+            }
+        </span>
+    }
+
     <hr />
+    
     <dl class="row">
         <dt class = "col-sm-2">
             Tipo

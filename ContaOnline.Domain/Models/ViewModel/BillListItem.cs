@@ -12,7 +12,7 @@ namespace OnlineBill.Domain.Models
         public DateTime DueDate { get; set; }
         public PayReceive Type { get; set; }
         public string Description { get; set; }
-        public string Contact {  get; set; }
+        public string? Contact {  get; set; }
         public string Category { get; set; }
         public decimal Value { get; set; }
         public DateTime? PaymentDate { get; set; }

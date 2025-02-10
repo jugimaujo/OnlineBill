@@ -43,6 +43,12 @@ namespace OnlineBill.UI.Web.Controllers
 
             model.BillList = _billRepository.GetByUser(loggedUserId);
 
+            model.TotalNotPaid = model.BillList.Sum(bill => (bill.PaymentDate == null && bill.PaidValue == null && (bill.DueDate - DateTime.Now).Days >= 0) ? bill.Value : 0);
+
+            model.TotalExpiredNotPaid = model.BillList.Sum(bill => (bill.PaymentDate == null && bill.PaidValue == null && (bill.DueDate - DateTime.Now).Days < 0) ? bill.Value : 0);
+
+            model.TotalPaid = model.BillList.Sum(bill => (bill.PaymentDate != null || bill.PaidValue != null) ? bill.Value : 0);
+
             FillBillListViewModel(model);
 
             return View(model);
@@ -54,6 +60,12 @@ namespace OnlineBill.UI.Web.Controllers
             model.Filter.UserId = loggedUserId;
 
             model.BillList = _billRepository.GetByFilter(model.Filter).ToList();
+
+            model.TotalNotPaid = model.BillList.Sum(bill => (bill.PaymentDate == null && bill.PaidValue == null) ? bill.Value : 0);
+
+            model.TotalExpiredNotPaid = model.BillList.Sum(bill => (bill.PaymentDate == null && bill.PaidValue == null && (bill.DueDate - DateTime.Now).Days < 0) ? bill.Value : 0);
+
+            model.TotalPaid = model.BillList.Sum(bill => (bill.PaymentDate != null || bill.PaidValue != null) ? bill.Value : 0);
 
             FillBillListViewModel(model);
 

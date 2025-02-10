@@ -13,7 +13,7 @@
         <form asp-action="Add">
             <div class="form-group">
                 <label asp-for="Description" class="control-label">Descrição</label>
-                <input asp-for="Description" class="form-control" autofocus />
+                <input asp-for="Description" class="form-control" autofocus autocomplete="off" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <br />

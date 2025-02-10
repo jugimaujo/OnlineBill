@@ -16,8 +16,7 @@ namespace OnlineBill.Domain.Models
         public PayReceive Type { get; set; }
         [Required(ErrorMessage = "A categoria deve ser informada.")]
         public string CategoryId { get; set; }
-        [Required(ErrorMessage = "O contato deve ser informado.")]
-        public string ContactId { get; set; }
+        public string? ContactId { get; set; }
         public string? Description { get; set; }
         [Required(ErrorMessage = "A data de vencimento deve ser informada.")]
         public DateTime DueDate { get; set; }
