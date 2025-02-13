@@ -151,19 +151,25 @@
 <br />
 
 <div id="totals" class="d-flex justify-content-end">
-    <div class="d-flex justify-content-evenly w-50">
-        <div class="row text-center text-white bg-dark border border-5 border-dark rounded">
+    <div class="d-flex justify-content-evenly w-75">
+        <div class="row w-25 text-white bg-dark border border-5 border-dark rounded-pill">
+            <div class="text-center">
                 Total a vencer: <br /> @Model.TotalNotPaid.ToString("C")
+            </div>
         </div>
-        <div class="row text-center text-danger bg-dark border border-5 border-dark rounded">
+        <div class="row w-25 text-danger bg-dark border border-5 border-dark rounded-pill">
+            <div class="text-center">
                 Total já vencido: <br /> @Model.TotalExpiredNotPaid.ToString("C")
+            </div>
         </div>
-        <div class="row text-center text-success bg-dark border border-5 border-dark rounded">
-            Total já pago: <br /> @Model.TotalPaid.ToString("C")
+        <div class="row w-25 text-success bg-dark border border-5 border-dark rounded-pill">
+            <div class="text-center">
+                Total já pago: <br /> @Model.TotalPaid.ToString("C")
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/sort_table.js"></script>
+    <script src="~/table_sorter.js"></script>
 }

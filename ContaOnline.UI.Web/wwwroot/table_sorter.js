@@ -20,7 +20,7 @@ if (table) {
                         isChanged = 1;
                     }
                 });
-                
+
                 if (isChanged != 1) this.classList.toggle('asc');
 
                 sortTableByColumn(table, index, !this.classList.contains('asc'));
@@ -29,16 +29,15 @@ if (table) {
     }
 }
 
-function sortTableByColumn(table, column, desc=false)
-{
+function sortTableByColumn(table, column, desc = false) {
     let tbody = table.querySelector('tbody');
-        rows = tbody.querySelectorAll('tr');
+    rows = tbody.querySelectorAll('tr');
 
     rows = rows.isArray ? rows : Object.values(rows);
 
     function compare(a, b) {
-        let aText = a.children[column].innerText.trim();
-            bText = b.children[column].innerText.trim();
+        let aText = a.children[column].innerText.toUpperCase().trim();
+        bText = b.children[column].innerText.toUpperCase().trim();
 
         return (aText < bText) ? -1 : 1;
     }
