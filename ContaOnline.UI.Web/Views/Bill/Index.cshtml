@@ -89,26 +89,34 @@
     </thead>
     <tbody>
 @foreach (var item in Model.BillList) {
-        <tr style="background-color: @((item.PaidValue != null || item.PaymentDate != null) ? "#0B06" : "inherit")">
+        <tr style="background-color: @(
+            (item.PaidValue != null || item.PaymentDate != null)
+            ? "#0B06"
+            : ((item.DueDate - DateTime.Now).Days < 0 ? "#B006" : "inherit")
+        )">
             <td>
-                @if (item.PaidValue == null || item.PaymentDate == null)
+                @if (item.PaidValue == null && item.PaymentDate == null)
                 {
-                    @if ((item.DueDate - DateTime.Now).Days <= 14 && (item.DueDate - DateTime.Now).Days > 0)
+                    @if ((item.DueDate - DateTime.Now).Days <= 14 && (item.DueDate - DateTime.Now).Days > 6)
                     {
-                        <i class="bi bi-eye-fill"></i>
+                        <i class="bi bi-eye-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Fique de olho. Faltam @((item.DueDate - DateTime.Now).Days + 1) dias para esta conta vencer."></i>
                     }
-                    else if ((item.DueDate - DateTime.Now).Days <= 5 && (item.DueDate - DateTime.Now).Days > 0)
+                    else if ((item.DueDate - DateTime.Now).Days <= 7 && (item.DueDate - DateTime.Now).Days > 0)
                     {
-                        <i class="bi bi-clock-fill"></i>
+                        <i class="bi bi-clock-fill" data-toggle="tooltip" data-placement="left" title="Atenção. Apenas @((item.DueDate - DateTime.Now).Days + 1) dias para esta conta vencer."></i>
+                    }
+                    else if ((item.DueDate - DateTime.Now).Days == 0)
+                    {
+                        <i class="bi bi-hourglass-split" data-toggle="tooltip" data-placement="left" title="Atenção! Esta conta vence hoje!"></i>
                     }
                     else if ((item.DueDate - DateTime.Now).Days < 0)
                     {
-                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <i class="bi bi-exclamation-circle-fill" data-toggle="tooltip" data-placement="left" title="Vencido! Esta conta venceu a @((item.DueDate - DateTime.Now).Days * -1) dias."></i>
                     }
                 }
                 else
                 {
-                    <i class="bi-check-circle-fill"></i>
+                    <i class="bi-check-circle-fill" data-toggle="tooltip" data-placement="left" title="Quitada! Esta conta já está paga."></i>
                 }
             </td>
             <td>
