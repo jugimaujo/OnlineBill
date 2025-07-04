@@ -72,7 +72,7 @@
 
             <div class="form-group">
                 <label asp-for="BillInstance.Value" class="control-label"> Valor </label>
-                <input asp-for="BillInstance.Value" class="form-control" style="text-align:right" />
+                <input asp-for="BillInstance.Value" class="form-control" style="text-align:right" type="number" />
                 <span asp-validation-for="BillInstance.Value" class="text-danger"></span>
             </div>
 
@@ -86,19 +86,19 @@
 
             <div class="form-group">
                 <label asp-for="BillInstance.Increase" class="control-label"> Acréscimo </label>
-                <input asp-for="BillInstance.Increase" class="form-control" />
+                <input asp-for="BillInstance.Increase" class="form-control" type="number" />
                 <span asp-validation-for="BillInstance.Increase" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="BillInstance.Discount" class="control-label"> Desconto </label>
-                <input asp-for="BillInstance.Discount" class="form-control" />
+                <input asp-for="BillInstance.Discount" class="form-control" type="number" />
                 <span asp-validation-for="BillInstance.Discount" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="BillInstance.PaidValue" class="control-label"> Valor pago </label>
-                <input asp-for="BillInstance.PaidValue" class="form-control" />
+                <input asp-for="BillInstance.PaidValue" class="form-control" type="number "/>
                 <span asp-validation-for="BillInstance.PaidValue" class="text-danger"></span>
             </div>
 
