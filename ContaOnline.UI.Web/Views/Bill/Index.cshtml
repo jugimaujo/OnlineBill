@@ -7,9 +7,15 @@
 
 <h1>Contas a pagar e receber</h1>
 
-<p>
-    <a asp-action="Create"><i class="bi bi-plus-circle-fill"></i> Novo...</a>
-</p>
+<div class="d-flex justify-content-between">
+    <p>
+        <a asp-action="Create"><i class="bi bi-plus-circle-fill"></i> Novo...</a>
+    </p>
+
+    <div class="buttons-at-end">
+        <a asp-controller="App" asp-action="Index"><input type="button" value="Voltar" class="btn btn-dark" /></a>
+    </div>
+</div>
 
 <hr />
 
@@ -150,11 +156,6 @@
 }
     </tbody>
 </table>
-}
-
-<div class="buttons-at-end">
-    <a asp-controller="App" asp-action="Index"><input type="button" value="Voltar" class="btn btn-dark" /></a>
-</div>
 
 <br />
 
@@ -177,6 +178,7 @@
         </div>
     </div>
 </div>
+}
 
 @section Scripts {
     <script src="~/table_sorter.js"></script>

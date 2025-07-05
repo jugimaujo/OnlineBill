@@ -67,29 +67,43 @@
 
 <br />
 
-<div id="actionButtons" style="text-align: center;">
-	<button id="dueDateButton" class="btn btn-outline-primary btn-sm">Ganho e Perda a vencer</button>
-	<button id="totalDueDateButton" class="btn btn-outline-primary btn-sm">Valores Totais a vencer</button> |
-	<button id="payDateButton" class="btn btn-outline-primary btn-sm">Ganho e Perda pagos</button>
-	<button id="totalPayDateButton" class="btn btn-outline-primary btn-sm">Valores Totais pagos</button>
-</div>
+@if (Model.BillGroupBarGraph.Any())
+{
 
-<canvas id="graph" width="400" height="150">
-</canvas>
-
-<hr />
-
-<div id="pizzaContainer" class="pizza-container">
-	<div style="width: 400px; height: 400px;">
-		<canvas id="totalEarnPizza" class="pizza-graph" width="400" height="400">
-		</canvas>
+	<div id="actionButtons" style="text-align: center;">
+		<button id="dueDateButton" class="btn btn-outline-primary btn-sm">Ganho e Perda a vencer</button>
+		<button id="totalDueDateButton" class="btn btn-outline-primary btn-sm">Valores Totais a vencer</button> |
+		<button id="payDateButton" class="btn btn-outline-primary btn-sm">Ganho e Perda pagos</button>
+		<button id="totalPayDateButton" class="btn btn-outline-primary btn-sm">Valores Totais pagos</button>
 	</div>
-	<div style="width: 400px; height: 400px;">
-		<canvas id="totalLostPizza" class="pizza-graph" width="400" height="400">
-		</canvas>
-	</div>
-</div>
 
+	<canvas id="graph" width="400" height="150">
+	</canvas>
+
+	<hr />
+
+	<div id="pizzaContainer" class="pizza-container">
+		<div style="width: 400px; height: 400px;">
+			<canvas id="totalEarnPizza" class="pizza-graph" width="400" height="400">
+			</canvas>
+		</div>
+		<div style="width: 400px; height: 400px;">
+			<canvas id="totalLostPizza" class="pizza-graph" width="400" height="400">
+			</canvas>
+		</div>
+	</div>
+}
+
+else
+{
+	<h3>
+		O Relatório está vazio para esta categoria...
+	</h3>
+
+	<p>
+		Você não tem nenhuma conta registrada para a categoria selecionada.
+	</p>
+}
 
 @section Scripts {
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
