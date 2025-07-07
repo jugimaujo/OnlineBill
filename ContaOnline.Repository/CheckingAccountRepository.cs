@@ -17,7 +17,7 @@ namespace OnlineBill.Repository
         {
             string storedProcedure = "spr_checking_account_update";
 
-            Database.Execute(storedProcedure, checkingAccount);
+            Database.Execute(storedProcedure, param: new { id = checkingAccount.Id, description = checkingAccount.Description });
         }
 
         public void Delete(string id)

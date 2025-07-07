@@ -17,7 +17,7 @@ namespace OnlineBill.Repository
         {
             string storedProcedure = "spr_bill_category_update";
 
-            Database.Execute(storedProcedure, billCategory);
+            Database.Execute(storedProcedure, param: new { id = billCategory.Id, name = billCategory.Name });
         }
 
         public void Delete(string id)
