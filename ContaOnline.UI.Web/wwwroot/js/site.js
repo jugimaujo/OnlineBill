@@ -1,4 +1,10 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿
+$(document).ready(function () {
+    $('#primaryTelephone').inputmask('(99) 99999-9999');
+    $('#secondaryTelephone').inputmask('(99) 99999-9999');
+    $('#cpf').inputmask('999.999.999-99');
+    $('#cnpj').inputmask('99.999.999/9999-99');
+    $('#rg').inputmask('99.999.999-9');
 
-// Write your JavaScript code.
+    $('input').removeAttr('autocomplete');
+});
