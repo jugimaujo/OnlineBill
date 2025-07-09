@@ -19,6 +19,8 @@
 
 <hr />
 
+@if (Model.BillList.Any())
+{
 <div style="display: flex; justify-content: space-between;">
     <div class="filter">
         <form method="post" class="row g-3">
@@ -66,8 +68,6 @@
 
 <br /> <br />
 
-@if (Model.BillList.Count() > 0)
-{
 <table class="table table-sort">
     <thead>
         <tr>
@@ -178,6 +178,17 @@
         </div>
     </div>
 </div>
+}
+else
+{
+    <div class="mt-5">
+        <h4>
+            Ops... Parece que você não registrou nenhuma Conta ainda.
+        </h4>
+        <p class="mt-4">
+            Clique em "Novo..." para começar a criar.
+        </p>
+    </div>
 }
 
 @section Scripts {

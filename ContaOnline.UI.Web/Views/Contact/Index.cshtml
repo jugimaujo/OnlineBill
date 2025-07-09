@@ -9,47 +9,62 @@
 <p>
     <a asp-action="Create"><i class="bi bi-plus-circle-fill"></i> Novo...</a>
 </p>
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>
-                Nome
-            </th>
-            <th>
-                Telefone principal
-            </th>
-            <th>
-                Telefone secundário
-            </th>
-            <th>
-                E-mail
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model) {
-            <tr class="table-item">
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+
+@if (Model.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Nome
+                </th>
+                <th>
+                    Telefone principal
+                </th>
+                <th>
+                    Telefone secundário
+                </th>
+                <th>
+                    E-mail
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+                <tr class="table-item">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrimaryTelephoneNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SecondaryTelephoneNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                <td class="table-item-command">
+                    <a href="@Url.Action("Edit", new { id = item.Id})"><i class="bi bi-pen"></i></a> |
+                    <a href="@Url.Action("Delete", new { id = item.Id})"><i class="bi bi-trash3-fill"></i></a>
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PrimaryTelephoneNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SecondaryTelephoneNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-            <td class="table-item-command">
-                <a href="@Url.Action("Edit", new { id = item.Id})"><i class="bi bi-pen"></i></a> |
-                <a href="@Url.Action("Delete", new { id = item.Id})"><i class="bi bi-trash3-fill"></i></a>
-            </td>
-        </tr>
+            </tr>
+    }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="mt-5">
+        <h4>
+            Ops... Parece que você não tem registros de Contatos.
+        </h4>
+        <p class="mt-4">
+            Clique em "Novo..." para começar a criar.
+        </p>
+    </div>
+}
 
 <div class="buttons-at-end">
     <a asp-controller="App" asp-action="Index"><input type="button" value="Voltar" class="btn btn-dark" /></a>

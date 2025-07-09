@@ -151,22 +151,27 @@ namespace OnlineBill.UI.Web.Controllers
         {
             IEnumerable<User> usersList = _userRepository.GetAll();
 
-            var rememberedUsers = usersList.Where(user => user.RememberMe == true);
-
-            var logins = new List<LoginViewModel>();
-
-            foreach (var user in rememberedUsers)
+            if (usersList.Any())
             {
-                logins.Add(new LoginViewModel
+                var rememberedUsers = usersList.Where(user => user.RememberMe == true);
+
+                var logins = new List<LoginViewModel>();
+
+                foreach (var user in rememberedUsers)
                 {
-                    Name = user.Name,
-                    Email = user.Email,
-                    Password = user.Password,
-                    RememberMe = user.RememberMe ?? false
-                });
+                    logins.Add(new LoginViewModel
+                    {
+                        Name = user.Name,
+                        Email = user.Email,
+                        Password = user.Password,
+                        RememberMe = user.RememberMe ?? false
+                    });
+                }
+
+                return logins;
             }
 
-            return logins;
+            return [];
         }
     }
 }
