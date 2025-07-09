@@ -6,7 +6,8 @@ namespace OnlineBill.Repository
 {
     public static class Database
     {
-        private static string _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\jugimaujo\\source\\repos\\ContaOnline\\ContaOnline.Repository\\db_online_bill.mdf;Integrated Security=True";
+        private static readonly string projectDirectoryPath = Directory.GetCurrentDirectory().Replace("\\ContaOnline.UI.Web", "");
+        private static string _connectionString = $"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename={projectDirectoryPath}\\ContaOnline.Repository\\db_online_bill.mdf;Integrated Security=True";
 
         private static SqlConnection GetConnection()
         {   
